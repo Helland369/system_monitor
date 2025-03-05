@@ -1,0 +1,6 @@
+# ninja log v6
+0	1115	1741184914955975462	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	74978485ce4afe58
+5	1257	1741184914956509689	CMakeFiles/system_monitor.dir/src/main.cpp.o	ca1148af30b8f58a
+1257	1414	1741184916207986846	system_monitor	c4bb2b48f2a3b240
+4	1080	1741185260113077303	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	74978485ce4afe58
+1080	1229	1741185261189086881	system_monitor	c4bb2b48f2a3b240
