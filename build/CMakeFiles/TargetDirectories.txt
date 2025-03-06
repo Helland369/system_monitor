@@ -1,3 +1,0 @@
-/home/th/github/system_monitor/build/CMakeFiles/system_monitor.dir
-/home/th/github/system_monitor/build/CMakeFiles/edit_cache.dir
-/home/th/github/system_monitor/build/CMakeFiles/rebuild_cache.dir
