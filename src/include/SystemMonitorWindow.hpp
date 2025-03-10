@@ -1,3 +1,5 @@
+#pragma once
+
 #include <gtkmm-4.0/gtkmm/window.h>
 #include <gtkmm-4.0/gtkmm/frame.h>
 #include <gtkmm-4.0/gtkmm/box.h>
