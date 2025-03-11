@@ -3,3 +3,17 @@
 1	1183	1741612573749489483	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c704f166b741d24
 1	1344	1741612573749630809	CMakeFiles/system_monitor.dir/src/main.cpp.o	5519cf8bb77d6fd0
 1344	1504	1741612575091370988	system_monitor	75a83c5ce52b0919
+4	277	1741616980373917501	CMakeFiles/system_monitor.dir/src/CpuUsage.cpp.o	170f2bd4ff0c1dc6
+4	1152	1741616980375720265	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c704f166b741d24
+4	1324	1741616980375828028	CMakeFiles/system_monitor.dir/src/main.cpp.o	5519cf8bb77d6fd0
+1324	1470	1741616981693928732	system_monitor	75a83c5ce52b0919
+9	419	1741688110112172978	CMakeFiles/system_monitor.dir/src/CpuUsage.cpp.o	170f2bd4ff0c1dc6
+9	1288	1741688110113172986	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c704f166b741d24
+10	1373	1741688110113377709	CMakeFiles/system_monitor.dir/src/main.cpp.o	5519cf8bb77d6fd0
+1373	1561	1741688111475184545	system_monitor	75a83c5ce52b0919
+3	1220	1741695827065310629	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c704f166b741d24
+3	1252	1741695827067080887	CMakeFiles/system_monitor.dir/src/main.cpp.o	5519cf8bb77d6fd0
+1252	1402	1741695828314320515	system_monitor	75a83c5ce52b0919
+3	1285	1741697098113163917	CMakeFiles/system_monitor.dir/src/main.cpp.o	5519cf8bb77d6fd0
+4	1279	1741698195666561651	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c704f166b741d24
+1279	1433	1741698196941571951	system_monitor	75a83c5ce52b0919
