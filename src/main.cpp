@@ -1,21 +1,22 @@
 #include "include/SystemMonitorWindow.hpp"
+#include <cstddef>
 #include <gtkmm-4.0/gtkmm/application.h>
-// #include <iostream>
-// #include <thread>
-// #include <chrono>
-// #include "include/CpuUsage.hpp"
+#include <iostream>
+#include "CpuUsage.hpp"
+
 
 int main(int argc, char* argv[])
 {
-  // CpuUsage cpu;
-  // CpuData prev = cpu.get_cpu_data();
-  // std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  // CpuData curr = cpu.get_cpu_data();
+  CpuUsage cpu;
+  
+  std::vector<CpuData> cpu_data = cpu.get_cpu_tread_data();
 
-  // double cpuUsage = cpu.calculate_cpu_usage(prev, curr);
-  // std::cout << "CPU usage: " << cpuUsage << "%\n";
+  for (size_t i = 0; i < cpu_data.size(); i++)
+  {
+    std::cout << cpu_data[i].label << cpu_data[i].user << "\n";
+  }
 
   auto app = Gtk::Application::create("basic.system.monitor");
-
+  
   return app->make_window_and_run<SystemMonitorWindow>(argc, argv);
 }
