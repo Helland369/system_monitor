@@ -69,11 +69,14 @@ std::vector<CpuData> CpuUsage::get_cpu_tread_data()
 std::vector<CpuPercentage> CpuUsage::calculate_cpu_thread_usage(std::vector<CpuData> &curr, std::vector<CpuData> &prev)
 {
   std::vector<CpuPercentage> percentages;
+
+  if (curr.size() != prev.size())
+  {
+    return percentages; // return empty object if size is not equal.
+  }
   
   for (size_t i = 0; i < curr.size(); i++)
   {
-    // for (size_t j = 0; i < prev.size(); i++)
-    // {
       CpuPercentage percentage;
       percentage.name = curr[i].label;
 
@@ -90,7 +93,6 @@ std::vector<CpuPercentage> CpuUsage::calculate_cpu_thread_usage(std::vector<CpuD
       percentage.persentageUsed = (1.0 - (idleDelta / totalDelta)) * 100.0;
 
       percentages.push_back(percentage);
-    //}
   }
   return percentages;
 }
