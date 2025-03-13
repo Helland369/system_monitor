@@ -8,9 +8,15 @@ class CpuData
 {
 public:
   std::string label;
-  unsigned long long user, nice, system, idle, iowait, irq, softirq,
-        steal;
+  unsigned long long user, nice, system, idle, iowait, irq, softirq, steal, guest ,guest_nice;
 };
+
+class CpuPercentage
+{
+  public:
+  std::string name;
+  double persentageUsed;
+};   
 
 class CpuUsage
 {
@@ -24,5 +30,5 @@ public:
   
   double calculate_cpu_usage(const CpuData &prev, const CpuData &curr);
 
-  double calculate_cpu_thread_usage(const CpuData &prev, const CpuData &curr);
+  std::vector<CpuPercentage> calculate_cpu_thread_usage(std::vector<CpuData> &curr, std::vector<CpuData> &prev);
 };
