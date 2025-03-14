@@ -27,8 +27,6 @@ public:
   CpuData get_cpu_data();
 
   std::vector<CpuData> get_cpu_tread_data();
-  
-  double calculate_cpu_usage(const CpuData &prev, const CpuData &curr);
 
   std::vector<CpuPercentage> calculate_cpu_thread_usage(std::vector<CpuData> &curr, std::vector<CpuData> &prev);
 };
