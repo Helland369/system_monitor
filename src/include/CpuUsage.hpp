@@ -1,14 +1,14 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
-
 
 class CpuData
 {
 public:
   std::string label;
-  unsigned long long user, nice, system, idle, iowait, irq, softirq, steal, guest ,guest_nice;
+  std::uint64_t user, nice, system, idle, iowait, irq, softirq, steal, guest ,guest_nice;
 };
 
 class CpuPercentage
