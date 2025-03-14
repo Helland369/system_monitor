@@ -4,7 +4,6 @@
 #include <gtkmm-4.0/gtkmm/frame.h>
 #include <gtkmm-4.0/gtkmm/box.h>
 #include <gtkmm-4.0/gtkmm/progressbar.h>
-#include <memory>
 #include <glibmm/dispatcher.h>
 #include <vector>
 
