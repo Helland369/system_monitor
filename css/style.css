@@ -1,0 +1,12 @@
+.cpu-frame {
+    color: red;
+    background-color: blue;
+}
+
+.cpu-progress-bar {
+    color: pink;
+}
+
+.cpu-progress-bar progress {
+    background-color: black;
+}
