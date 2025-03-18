@@ -25,7 +25,7 @@ SystemMonitorWindow::SystemMonitorWindow()
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
       m_box_ram(Gtk::Orientation::VERTICAL, 5)      
 {
-  // set title for the wondow
+  // set title for the window
   set_title("System Monitor");
   // set window size
   set_default_size(800, 800);
@@ -83,7 +83,52 @@ SystemMonitorWindow::SystemMonitorWindow()
   
   // update cpu progress bar
   Glib::signal_timeout().connect([this]() { return update_cpu_progress_bar(); }, 1000);
+
+  m_frame_ram.set_child(m_box_ram);
+  m_box_ram.append(m_progressbar_mem_tot);
+  m_progressbar_mem_tot.set_margin(5);
+  m_progressbar_mem_tot.set_halign(Gtk::Align::CENTER);
+  m_progressbar_mem_tot.set_valign(Gtk::Align::CENTER);
+  m_progressbar_mem_tot.set_size_request(100, -1);
+  m_progressbar_mem_tot.set_show_text(true);
+  m_progressbar_mem_tot.set_size_request(300, -1);
+  m_progressbar_mem_tot.set_vexpand(true);
+  m_progressbar_mem_tot.set_hexpand(true);
+
+  m_box_ram.append(m_progressbar_mem_used);
+  m_progressbar_mem_used.set_margin(5);
+  m_progressbar_mem_used.set_halign(Gtk::Align::CENTER);
+  m_progressbar_mem_used.set_valign(Gtk::Align::CENTER);
+  m_progressbar_mem_used.set_size_request(100, -1);
+  m_progressbar_mem_used.set_show_text(true);
+  m_progressbar_mem_used.set_size_request(300, -1);
+  m_progressbar_mem_used.set_vexpand(true);
+  m_progressbar_mem_used.set_hexpand(true);
   
+  m_box_ram.append(m_progressbar_mem_available);
+  m_progressbar_mem_available.set_margin(5);
+  m_progressbar_mem_available.set_halign(Gtk::Align::CENTER);
+  m_progressbar_mem_available.set_valign(Gtk::Align::CENTER);
+  m_progressbar_mem_available.set_size_request(100, -1);
+  m_progressbar_mem_available.set_show_text(true);
+  m_progressbar_mem_available.set_size_request(300, -1);
+  m_progressbar_mem_available.set_vexpand(true);
+  m_progressbar_mem_available.set_hexpand(true);
+
+  m_box_ram.append(m_progressbar_mem_free);
+  m_progressbar_mem_free.set_margin(5);
+  m_progressbar_mem_free.set_halign(Gtk::Align::CENTER);
+  m_progressbar_mem_free.set_valign(Gtk::Align::CENTER);
+  m_progressbar_mem_free.set_size_request(100, -1);
+  m_progressbar_mem_free.set_show_text(true);
+  m_progressbar_mem_free.set_size_request(300, -1);
+  m_progressbar_mem_free.set_vexpand(true);
+  m_progressbar_mem_free.set_hexpand(true);
+
+  Glib::signal_timeout().connect([this]() { return update_mem_usage(); }, 1000);
+
+  update_mem_usage();
+
   m_frame_gpu.set_child(m_box_gpu);
   m_box_gpu.append(m_progressbar_gpu);
   m_progressbar_gpu.set_margin(5);
@@ -93,18 +138,9 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu.set_text("GPU progress bar");
   m_progressbar_gpu.set_show_text(true);
 
-  m_frame_ram.set_child(m_box_ram);
-  m_box_ram.append(m_progressbar_ram);
-  m_progressbar_ram.set_margin(5);
-  m_progressbar_ram.set_halign(Gtk::Align::CENTER);
-  m_progressbar_ram.set_valign(Gtk::Align::CENTER);
-  m_progressbar_ram.set_size_request(100, -1);
-  m_progressbar_ram.set_text("RAM progress bar");
-  m_progressbar_ram.set_show_text(true);
-  
   m_VBox.append(m_frame_cpu);
-  m_VBox.append(m_frame_gpu);
   m_VBox.append(m_frame_ram);
+  m_VBox.append(m_frame_gpu);
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
@@ -166,3 +202,30 @@ void SystemMonitorWindow::on_parsing_error(const Glib::RefPtr<const Gtk::CssSect
     << ", end_position = " << end_location.get_line_chars() << "\n";
   }
 }
+
+bool SystemMonitorWindow::update_mem_usage()
+{
+  MemData data = memInfo.get_mem_data();
+
+  // convert from kb to gb
+  double totGIB = data.memTotal / 1024.0 / 1024.0;
+  double freeGIB = data.memFree / 1024.0 / 1024.0;
+  double availableGIB = data.memAvailable / 1024.0 / 1024.0;
+  double usedGIB = totGIB - availableGIB;
+
+  // calculate percentage
+  double percentageUsed = usedGIB / totGIB;
+  double percentageAvailable = availableGIB / totGIB;
+  
+  m_progressbar_mem_tot.set_text("Total memory: " + std::to_string(totGIB) + " GIB");
+  m_progressbar_mem_used.set_text("Memory used: " + std::to_string(usedGIB) + " GIB");
+  m_progressbar_mem_available.set_text("Available memory: " + std::to_string(availableGIB) + " GIB");
+  m_progressbar_mem_free.set_text("Free memory: " + std::to_string(freeGIB) + " GIB");
+  
+  m_progressbar_mem_tot.set_fraction(1.0);
+  m_progressbar_mem_used.set_fraction(percentageUsed);
+  m_progressbar_mem_available.set_fraction(percentageAvailable);
+  m_progressbar_mem_free.set_fraction(freeGIB);
+
+  return true;
+}    

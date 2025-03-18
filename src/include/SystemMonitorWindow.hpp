@@ -1,12 +1,12 @@
 #pragma once
 
+#include "MemInfo.hpp"
 #include <gtkmm-4.0/gtkmm/window.h>
 #include <gtkmm-4.0/gtkmm/frame.h>
 #include <gtkmm-4.0/gtkmm/box.h>
 #include <gtkmm-4.0/gtkmm/progressbar.h>
 #include <glibmm/dispatcher.h>
 #include <vector>
-
 #include "CpuUsage.hpp"
 #include "glibmm/error.h"
 #include "glibmm/refptr.h"
@@ -20,7 +20,7 @@ private:
   Gtk::Box m_VBox;
   Gtk::Box m_box_cpu, m_box_gpu, m_box_ram;
   Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram;
-  Gtk::ProgressBar m_progressbar_gpu, m_progressbar_ram;
+  Gtk::ProgressBar m_progressbar_gpu, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;
 
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section, const Glib::Error& error);
@@ -36,7 +36,13 @@ private:
   std::vector<double> cpuUsageData;
 
   Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
+
+  // mem
+
+  MemInfo memInfo;
   
+  bool update_mem_usage();
+
 public:
   SystemMonitorWindow();
   ~SystemMonitorWindow();

@@ -24,6 +24,10 @@ class CpuUsage
 private:
 
 public:
+
+  CpuUsage();
+  ~CpuUsage();
+
   CpuData get_cpu_data();
 
   std::vector<CpuData> get_cpu_tread_data();

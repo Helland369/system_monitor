@@ -5,6 +5,10 @@
 #include <sstream>
 #include <vector>
 
+CpuUsage::CpuUsage() {}
+
+CpuUsage::~CpuUsage() {}
+
 std::vector<CpuData> CpuUsage::get_cpu_tread_data()
 {
   std::ifstream file("/proc/stat");
