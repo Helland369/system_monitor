@@ -12,6 +12,7 @@
 #include "glibmm/refptr.h"
 #include "gtkmm/cssprovider.h"
 #include "gtkmm/csssection.h"
+#include "NvidiaInfo.hpp"
 
 class SystemMonitorWindow : public Gtk::Window
 {
@@ -20,7 +21,7 @@ private:
   Gtk::Box m_VBox;
   Gtk::Box m_box_cpu, m_box_gpu, m_box_ram;
   Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram;
-  Gtk::ProgressBar m_progressbar_gpu, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free;
+  Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;
 
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section, const Glib::Error& error);
@@ -43,6 +44,11 @@ private:
   
   bool update_mem_usage();
 
+  // Nvidia GPU
+  NvidiaInfo nvidia;
+
+  bool update_nvidia_gpu_usage();
+  
 public:
   SystemMonitorWindow();
   ~SystemMonitorWindow();

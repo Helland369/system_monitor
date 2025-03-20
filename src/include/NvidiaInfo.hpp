@@ -1,4 +1,13 @@
+#pragma once
+
 #include <nvml.h>
+
+class NvidiaData
+{
+public:
+  double gpuUtil, memUtil, totVram, usedVram, freeVram;
+};   
+
 
 class NvidiaInfo
 {
@@ -11,5 +20,5 @@ public:
   ~NvidiaInfo();
 
   void checkNvml(nvmlReturn_t result, const char* msg);
-  void printNvml();
+  NvidiaData calculateNvml();
 };
