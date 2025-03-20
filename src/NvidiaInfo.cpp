@@ -1,4 +1,5 @@
 #include "include/NvidiaInfo.hpp"
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 
@@ -15,8 +16,10 @@ void NvidiaInfo::checkNvml(nvmlReturn_t result, const char* msg)
   }
 }
 
-void NvidiaInfo::printNvml()
+NvidiaData NvidiaInfo::calculateNvml()
 {
+  NvidiaData data;
+
   nvmlReturn_t result;
   result = nvmlInit();
   checkNvml(result, "Initializing NVML");
@@ -25,20 +28,20 @@ void NvidiaInfo::printNvml()
   result = nvmlDeviceGetHandleByIndex(0, &device);
   checkNvml(result, "Getting GPU handle");
 
-  unsigned int gpuUtil, memUtil;
+  std::uint16_t gpuUtil, memUtil;
   result = nvmlDeviceGetUtilizationRates(device, &utililization);
   checkNvml(result, "Getting GPU utilization");
 
-  gpuUtil = utililization.gpu;
-  memUtil = utililization.memory;
+  data.gpuUtil = utililization.gpu;
+  data.memUtil = utililization.memory;
 
   nvmlMemory_t memory;
   result = nvmlDeviceGetMemoryInfo(device, &memory);
   checkNvml(result, "Getting GPU memory info");
 
-  std::cout << "GPU util: " << gpuUtil << "%\n"
-  << "Mem util: " << memUtil << "%\n"
-  << "Tot Vram: " << memory.total / (1024 * 1024) << "MB\n"
-  << "Used Vram: " << memory.used / (1024 * 1024) << "MB\n"
-  << "Free Vram: " << memory.free / (1024 * 1024) << "MB\n";
+  data.totVram = memory.free / (1024.0 * 1024 * 1024);
+  data.usedVram = memory.used / (1024.0 * 1024 * 1024);
+  data.freeVram = memory.free / (1024.0 * 1024 * 1024);
+
+  return data;
 }    
