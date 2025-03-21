@@ -5,6 +5,7 @@
 #include <gtkmm-4.0/gtkmm/frame.h>
 #include <gtkmm-4.0/gtkmm/box.h>
 #include <gtkmm-4.0/gtkmm/progressbar.h>
+#include <gtkmm-4.0/gtkmm/grid.h>
 #include <glibmm/dispatcher.h>
 #include <vector>
 #include "CpuUsage.hpp"
@@ -17,8 +18,10 @@
 class SystemMonitorWindow : public Gtk::Window
 {
 private:
+  Gtk::Window m_window;
   Gtk::Box m_HBox;
   Gtk::Box m_VBox;
+  Gtk::Grid m_grid_cpu;
   Gtk::Box m_box_cpu, m_box_gpu, m_box_ram;
   Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram;
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free;

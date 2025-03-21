@@ -30,6 +30,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   set_title("System Monitor");
   // set window size
   set_default_size(800, 800);
+
+  m_window.add_css_class("m-window");
   
   m_HBox.set_margin(5);
   set_child(m_HBox);
@@ -37,6 +39,10 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   prev = cpu.get_cpu_tread_data();
   size_t cpu_count = prev.size();
+
+  m_grid_cpu.set_column_homogeneous(true);
+  m_grid_cpu.set_column_spacing(6);
+  m_grid_cpu.set_row_spacing(10);
 
   for (size_t i = 0; i < cpu_count; i++)
   {
@@ -50,10 +56,16 @@ SystemMonitorWindow::SystemMonitorWindow()
     prog_bar->set_text("CPU" + std::to_string(i));
     prog_bar->set_show_text(true);
 
-    m_frame_cpu.set_child(m_box_cpu);
-    m_box_cpu.append(*prog_bar);
+    int col = i % 3;
+    int row = i / 3;
+    m_grid_cpu.attach(*prog_bar, col, row);
   }
 
+  m_frame_cpu.set_child(m_grid_cpu);
+  m_frame_cpu.set_hexpand(true);
+  m_frame_cpu.set_valign(Gtk::Align::FILL);
+  m_frame_cpu.add_css_class("cpu-frame");
+  
   m_dispatcher.connect([this]()
   {
     for (size_t i = 0; i < cpuUsageData.size() && i < m_progressbar_cpu.size(); i++)
