@@ -85,6 +85,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   // update cpu progress bar
   Glib::signal_timeout().connect([this]() { return update_cpu_progress_bar(); }, 1000);
 
+  update_cpu_progress_bar();
+  
   m_frame_ram.set_child(m_box_ram);
   m_box_ram.append(m_progressbar_mem_tot);
   m_progressbar_mem_tot.set_margin(5);
@@ -151,16 +153,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_memUtil.set_vexpand(true);
   m_progressbar_gpu_nvidia_memUtil.set_hexpand(true);
   
-  // m_box_gpu.append(m_progressbar_gpu_nvidia_totVram);
-  // m_progressbar_gpu_nvidia_totVram.set_margin(5);
-  // m_progressbar_gpu_nvidia_totVram.set_halign(Gtk::Align::CENTER);
-  // m_progressbar_gpu_nvidia_totVram.set_valign(Gtk::Align::CENTER);
-  // m_progressbar_gpu_nvidia_totVram.set_size_request(100, -1);
-  // m_progressbar_gpu_nvidia_totVram.set_show_text(true);
-  // m_progressbar_gpu_nvidia_totVram.set_size_request(300, -1);
-  // m_progressbar_gpu_nvidia_totVram.set_vexpand(true);
-  // m_progressbar_gpu_nvidia_totVram.set_hexpand(true);
-  
   m_box_gpu.append(m_progressbar_gpu_nvidia_usedVram);
   m_progressbar_gpu_nvidia_usedVram.set_margin(5);
   m_progressbar_gpu_nvidia_usedVram.set_halign(Gtk::Align::CENTER);
@@ -182,6 +174,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_freeVram.set_hexpand(true);
 
   Glib::signal_timeout().connect([this]() { return update_nvidia_gpu_usage(); }, 1000);
+
+  update_nvidia_gpu_usage();
   
   m_VBox.append(m_frame_cpu);
   m_VBox.append(m_frame_ram);
