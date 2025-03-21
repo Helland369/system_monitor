@@ -39,7 +39,7 @@ NvidiaData NvidiaInfo::calculateNvml()
   result = nvmlDeviceGetMemoryInfo(device, &memory);
   checkNvml(result, "Getting GPU memory info");
 
-  data.totVram = memory.free / (1024.0 * 1024 * 1024);
+  data.totVram = memory.total / (1024.0 * 1024 * 1024);
   data.usedVram = memory.used / (1024.0 * 1024 * 1024);
   data.freeVram = memory.free / (1024.0 * 1024 * 1024);
 
