@@ -261,6 +261,7 @@ bool SystemMonitorWindow::update_mem_usage()
   // calculate percentage
   double percentageUsed = usedGIB / totGIB;
   double percentageAvailable = availableGIB / totGIB;
+  double percentageFree = freeGIB / totGIB;
   
   m_progressbar_mem_tot.set_text("Total memory: " + std::to_string(totGIB) + " GIB");
   m_progressbar_mem_used.set_text("Memory used: " + std::to_string(usedGIB) + " GIB");
@@ -270,7 +271,7 @@ bool SystemMonitorWindow::update_mem_usage()
   m_progressbar_mem_tot.set_fraction(1.0);
   m_progressbar_mem_used.set_fraction(percentageUsed);
   m_progressbar_mem_available.set_fraction(percentageAvailable);
-  m_progressbar_mem_free.set_fraction(freeGIB);
+  m_progressbar_mem_free.set_fraction(percentageFree);
 
   return true;
 }
@@ -295,8 +296,8 @@ bool SystemMonitorWindow::update_nvidia_gpu_usage()
     m_progressbar_gpu_nvidia_usedVram.set_fraction(usedFraction);
     m_progressbar_gpu_nvidia_freeVram.set_fraction(freeFraction);
 
-    m_progressbar_gpu_nvidia_usedVram.set_text("Used Vram: " + std::to_string(data.usedVram) + " GIB");
-    m_progressbar_gpu_nvidia_freeVram.set_text("Free Vram: " + std::to_string(data.totVram - data.usedVram) + " GIB");
+    m_progressbar_gpu_nvidia_usedVram.set_text("Used Vram: " + std::to_string(data.usedVram) + " GIB" + " / " + std::to_string(data.totVram) + " GIB");
+    m_progressbar_gpu_nvidia_freeVram.set_text("Free Vram: " + std::to_string(data.totVram - data.usedVram) + " GIB" + " / " + std::to_string(data.totVram) + " GIB");
   }
   else
   {
