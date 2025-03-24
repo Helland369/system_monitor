@@ -20,23 +20,25 @@
 
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
-      m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu("CPU"),
+      m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu(cpu.get_cpu_name()),
       m_frame_ram("RAM"), m_frame_gpu("GPU"),
       m_box_cpu(Gtk::Orientation::VERTICAL, 5),
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
-      m_box_ram(Gtk::Orientation::VERTICAL, 5)      
+      m_box_ram(Gtk::Orientation::VERTICAL, 5),
+      m_ram_gpu_box(Gtk::Orientation::HORIZONTAL)
 {
   // set title for the window
   set_title("System Monitor");
   // set window size
   set_default_size(800, 800);
 
-  m_window.add_css_class("m-window");
+  add_css_class("main-window");
   
   m_HBox.set_margin(5);
   set_child(m_HBox);
   m_HBox.append(m_VBox);
-
+  //m_VBox.append(m_ram_gpu_box);
+  
   prev = cpu.get_cpu_tread_data();
   size_t cpu_count = prev.size();
 
@@ -100,6 +102,7 @@ SystemMonitorWindow::SystemMonitorWindow()
   update_cpu_progress_bar();
   
   m_frame_ram.set_child(m_box_ram);
+  m_frame_ram.add_css_class("ram-frame");
   m_box_ram.append(m_progressbar_mem_tot);
   m_progressbar_mem_tot.set_margin(5);
   m_progressbar_mem_tot.set_halign(Gtk::Align::CENTER);
@@ -140,11 +143,17 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_free.set_vexpand(true);
   m_progressbar_mem_free.set_hexpand(true);
 
+  m_progressbar_mem_tot.add_css_class("mem-progressbar-tot");
+  m_progressbar_mem_used.add_css_class("mem-progressbar-used");
+  m_progressbar_mem_available.add_css_class("mem-progressbar-available");
+  m_progressbar_mem_free.add_css_class("mem-progressbar-free");
+  
   Glib::signal_timeout().connect([this]() { return update_mem_usage(); }, 1000);
 
   update_mem_usage();
 
   m_frame_gpu.set_child(m_box_gpu);
+  m_frame_gpu.add_css_class("gpu-frame");
   m_box_gpu.append(m_progressbar_gpu_nvidia_gpuUtil);
   m_progressbar_gpu_nvidia_gpuUtil.set_margin(5);
   m_progressbar_gpu_nvidia_gpuUtil.set_halign(Gtk::Align::CENTER);
@@ -185,13 +194,20 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_freeVram.set_vexpand(true);
   m_progressbar_gpu_nvidia_freeVram.set_hexpand(true);
 
+  m_progressbar_gpu_nvidia_gpuUtil.add_css_class("gpu-progressbar-nvidia-gpuUtil");
+  m_progressbar_gpu_nvidia_memUtil.add_css_class("gpu-progressbar-nvidia-memUtil");
+  m_progressbar_gpu_nvidia_usedVram.add_css_class("gpu-progressbar-nvidia-usedVram");
+  m_progressbar_gpu_nvidia_freeVram.add_css_class("gpu-progressbar-nvidia-freeVram");
+
   Glib::signal_timeout().connect([this]() { return update_nvidia_gpu_usage(); }, 1000);
 
   update_nvidia_gpu_usage();
   
   m_VBox.append(m_frame_cpu);
-  m_VBox.append(m_frame_ram);
-  m_VBox.append(m_frame_gpu);
+  m_ram_gpu_box.set_spacing(5);
+  m_ram_gpu_box.append(m_frame_ram);
+  m_ram_gpu_box.append(m_frame_gpu);
+  m_VBox.append(m_ram_gpu_box);
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY

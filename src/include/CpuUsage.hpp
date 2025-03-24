@@ -33,4 +33,6 @@ public:
   std::vector<CpuData> get_cpu_tread_data();
 
   std::vector<CpuPercentage> calculate_cpu_thread_usage(std::vector<CpuData> &curr, std::vector<CpuData> &prev);
+
+  std::string get_cpu_name();
 };
