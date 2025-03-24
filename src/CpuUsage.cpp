@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <vector>
 
 CpuUsage::CpuUsage() {}
@@ -64,3 +65,27 @@ std::vector<CpuPercentage> CpuUsage::calculate_cpu_thread_usage(std::vector<CpuD
   }
   return percentages;
 }
+
+std::string CpuUsage::get_cpu_name()
+{
+  std::ifstream file("/proc/cpuinfo");
+  std::string line;
+  std::string cpuName;
+
+  if (file.is_open())
+  {
+    while (std::getline(file, line))
+    {
+      if (line.find("model name") != std::string::npos)
+      {
+        size_t pos = line.find(":");
+        if (pos != std::string::npos)
+        {
+          cpuName = line.substr(pos + 2);
+          break;
+        }
+      }
+    }
+  }
+  return cpuName;
+}    

@@ -1,12 +1,91 @@
+.main-window {
+    background-color: black;
+    color: white;
+}
+
 .cpu-frame {
-    color: red;
-    background-color: blue;
+    color: whitesmoke;
+    background-color: #3333;
 }
 
 .cpu-progress-bar {
-    color: pink;
+    color: whitesmoke;
 }
 
 .cpu-progress-bar progress {
+    background-color: black;
+}
+
+.ram-frame {
+    color: whitesmoke;
+    background-color: #3333;
+}
+
+.mem-progressbar-tot {
+    color: whitesmoke;
+}
+
+.mem-progressbar-tot progress {
+    background-color: black;
+}
+
+.mem-progressbar-used {
+    color: whitesmoke;
+}
+
+.mem-progressbar-used progress {
+    background-color: black;
+}
+
+.mem-progressbar-available {
+    color: whitesmoke;
+}
+
+.mem-progressbar-available progress {
+    background-color: black;
+}
+
+.mem-progressbar-free {
+    color: whitesmoke;
+}
+
+.mem-progressbar-free progress {
+    background-color: black;
+}
+
+.gpu-frame {
+    color: whitesmoke;
+    background-color: #3333;
+}
+
+.gpu-progressbar-nvidia-gpuUtil {
+    color: whitesmoke;
+}
+
+.gpu-progressbar-nvidia-gpuUtil progress {
+    background-color: black;
+}
+
+.gpu-progressbar-nvidia-memUtil {
+    color: whitesmoke;
+}
+
+gpu-progressbar-nvidia-memUtil progress {
+    background-color: black;
+}
+
+.gpu-progressbar-nvidia-usedVram {
+    color: whitesmoke;
+}
+
+.gpu-progressbar-nvidia-usedVram progress {
+    background-color: black;
+}
+
+.gpu-progressbar-nvidia-freeVram {
+    color: whitesmoke;
+}
+
+.gpu-progressbar-nvidia-freeVram progress {
     background-color: black;
 }
