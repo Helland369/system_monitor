@@ -44,4 +44,24 @@ NvidiaData NvidiaInfo::calculateNvml()
   data.freeVram = memory.free / (1024.0 * 1024 * 1024);
 
   return data;
+}
+
+std::string NvidiaInfo::get_nvidia_gpu_name()
+{
+  char name[NVML_DEVICE_NAME_BUFFER_SIZE];
+
+  nvmlReturn_t result;
+  result = nvmlInit();
+  checkNvml(result, "Initializing NVML");
+
+  nvmlDevice_t device;
+  result = nvmlDeviceGetHandleByIndex(0, &device);
+  checkNvml(result, "Getting GPU handle");
+
+  result = nvmlDeviceGetName(device, name, NVML_DEVICE_NAME_BUFFER_SIZE);
+  checkNvml(result, "Getting GPU name");
+
+  std::string Name = name;
+
+  return Name;
 }    

@@ -21,7 +21,7 @@
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
       m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu(cpu.get_cpu_name()),
-      m_frame_ram("RAM"), m_frame_gpu("GPU"),
+      m_frame_ram("RAM"), m_frame_gpu(nvidia.get_nvidia_gpu_name()),
       m_box_cpu(Gtk::Orientation::VERTICAL, 5),
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
