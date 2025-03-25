@@ -45,3 +45,10 @@
 1627	1782	1742819792744258554	system_monitor	6a6b7f9ecb7d0ab4
 5	1396	1742819831124621573	CMakeFiles/system_monitor.dir/src/main.cpp.o	592eba2738aeb789
 1396	1592	1742819832515634686	system_monitor	6a6b7f9ecb7d0ab4
+13	387	1742903872908480843	CMakeFiles/system_monitor.dir/src/NvidiaInfo.cpp.o	9806d7313d94a526
+14	1413	1742903872910319515	CMakeFiles/system_monitor.dir/src/main.cpp.o	592eba2738aeb789
+13	1714	1742903872910086236	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c6fe9d711cd8719
+1714	1909	1742903874609495888	system_monitor	6a6b7f9ecb7d0ab4
+4	1303	1742903953491192944	CMakeFiles/system_monitor.dir/src/main.cpp.o	592eba2738aeb789
+4	1633	1742903953490192935	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c6fe9d711cd8719
+1633	1791	1742903955120207327	system_monitor	6a6b7f9ecb7d0ab4
