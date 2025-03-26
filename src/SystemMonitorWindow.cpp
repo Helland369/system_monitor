@@ -27,6 +27,9 @@ SystemMonitorWindow::SystemMonitorWindow()
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
       m_ram_gpu_box(Gtk::Orientation::HORIZONTAL)
 {
+  // get ip data
+  ipData = netInfo.get_ip_address();
+
   // set title for the window
   set_title("System Monitor");
   // set window size
@@ -202,12 +205,16 @@ SystemMonitorWindow::SystemMonitorWindow()
   Glib::signal_timeout().connect([this]() { return update_nvidia_gpu_usage(); }, 1000);
 
   update_nvidia_gpu_usage();
-  
+
+  m_frame_net.set_child(m_box_net);
+  m_frame_net.set_label(ipData.name + " " + ipData.addr);
+
   m_VBox.append(m_frame_cpu);
   m_ram_gpu_box.set_spacing(5);
   m_ram_gpu_box.append(m_frame_ram);
   m_ram_gpu_box.append(m_frame_gpu);
   m_VBox.append(m_ram_gpu_box);
+  m_VBox.append(m_frame_net);
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
