@@ -7,6 +7,7 @@
 #include <gtkmm-4.0/gtkmm/progressbar.h>
 #include <gtkmm-4.0/gtkmm/grid.h>
 #include <glibmm/dispatcher.h>
+#include <system_error>
 #include <vector>
 #include "CpuUsage.hpp"
 #include "glibmm/error.h"
@@ -14,6 +15,7 @@
 #include "gtkmm/cssprovider.h"
 #include "gtkmm/csssection.h"
 #include "NvidiaInfo.hpp"
+#include "NetInfo.hpp"
 
 class SystemMonitorWindow : public Gtk::Window
 {
@@ -21,8 +23,8 @@ private:
   Gtk::Box m_HBox;
   Gtk::Box m_VBox;
   Gtk::Grid m_grid_cpu;
-  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_ram_gpu_box;
-  Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram;
+  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_ram_gpu_box;
+  Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net;
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;
 
@@ -50,6 +52,10 @@ private:
   NvidiaInfo nvidia;
 
   bool update_nvidia_gpu_usage();
+
+  // net
+  NetInfo netInfo;
+  IpData ipData;
   
 public:
   SystemMonitorWindow();
