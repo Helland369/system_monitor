@@ -7,7 +7,6 @@
 #include <gtkmm-4.0/gtkmm/progressbar.h>
 #include <gtkmm-4.0/gtkmm/grid.h>
 #include <glibmm/dispatcher.h>
-#include <system_error>
 #include <vector>
 #include "CpuUsage.hpp"
 #include "glibmm/error.h"
@@ -56,6 +55,9 @@ private:
   // net
   NetInfo netInfo;
   IpData ipData;
+
+  // formating
+  std::string two_decimals_format(double value);
   
 public:
   SystemMonitorWindow();

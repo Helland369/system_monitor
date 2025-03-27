@@ -10,10 +10,14 @@
 #include "gtkmm/object.h"
 #include "gtkmm/progressbar.h"
 #include "gtkmm/stylecontext.h"
+#include <cmath>
 #include <gtkmm/cssprovider.h>
 #include <cstddef>
 #include <glibmm.h>
+#include <iomanip>
+#include <ios>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <chrono>
@@ -40,7 +44,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_HBox.set_margin(5);
   set_child(m_HBox);
   m_HBox.append(m_VBox);
-  //m_VBox.append(m_ram_gpu_box);
   
   prev = cpu.get_cpu_tread_data();
   size_t cpu_count = prev.size();
@@ -57,9 +60,12 @@ SystemMonitorWindow::SystemMonitorWindow()
     prog_bar->set_margin(5);
     prog_bar->set_halign(Gtk::Align::CENTER);
     prog_bar->set_valign(Gtk::Align::CENTER);
-    prog_bar->set_size_request(100, -1);
+    // prog_bar->set_size_request(100, -1);
     prog_bar->set_text("CPU" + std::to_string(i));
-    prog_bar->set_show_text(true);
+    prog_bar->set_show_text(true);prog_bar->set_hexpand();
+    prog_bar->set_vexpand();
+    prog_bar->set_valign(Gtk::Align::CENTER);
+
 
     int col = i % 3;
     int row = i / 3;
@@ -78,17 +84,20 @@ SystemMonitorWindow::SystemMonitorWindow()
       double usageFraction = cpuUsageData[i] / 100.0;
       m_progressbar_cpu[i]->set_fraction(usageFraction);
       m_progressbar_cpu[i]->add_css_class("cpu-progress-bar");
-      m_progressbar_cpu[i]->set_size_request(300, -1);
-      m_progressbar_cpu[i]->set_vexpand(true);
-      m_progressbar_cpu[i]->set_hexpand(true);
-
+      // m_progressbar_cpu[i]->set_size_request(300, 25);
+      // m_progressbar_cpu[i]->set_vexpand(true);
+      // m_progressbar_cpu[i]->set_hexpand(true);
+      // m_progressbar_cpu[i]->set_hexpand(25);
+      // m_progressbar_cpu[i]->set_vexpand(25);
+      // m_progressbar_cpu[i]->set_valign(Gtk::Align::CENTER);
+      
       if (i == 0)
       {
-        m_progressbar_cpu[0]->set_text("Total CPU " + std::to_string(cpuUsageData[0]) + "%");
+        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpuUsageData[0]) + "%");
       }
       else
       {
-        m_progressbar_cpu[i]->set_text("CPU" + std::to_string(i) + " " + std::to_string(cpuUsageData[i]) + "%");
+        m_progressbar_cpu[i]->set_text("CPU" + std::to_string(i) + " " + two_decimals_format(cpuUsageData[i]) + "%");
       }
     }
   });
@@ -245,7 +254,7 @@ bool SystemMonitorWindow::update_cpu_progress_bar()
     cpuUsageData.clear();
     for (const auto& usage : cpuUsage)
     {
-      cpuUsageData.push_back(usage.persentageUsed);
+      cpuUsageData.push_back(usage.percentageUsed);
     }
 
     m_dispatcher.emit();
@@ -281,6 +290,8 @@ bool SystemMonitorWindow::update_mem_usage()
 {
   MemData data = memInfo.get_mem_data();
 
+  // TODO display less decimales
+  
   // convert from kb to gb
   double totGIB = data.memTotal / 1024.0 / 1024.0;
   double freeGIB = data.memFree / 1024.0 / 1024.0;
@@ -291,11 +302,13 @@ bool SystemMonitorWindow::update_mem_usage()
   double percentageUsed = usedGIB / totGIB;
   double percentageAvailable = availableGIB / totGIB;
   double percentageFree = freeGIB / totGIB;
+
+  // float x = std::floor(totGIB * 100.0) / 100.0f;
   
-  m_progressbar_mem_tot.set_text("Total memory: " + std::to_string(totGIB) + " GIB");
-  m_progressbar_mem_used.set_text("Memory used: " + std::to_string(usedGIB) + " GIB");
-  m_progressbar_mem_available.set_text("Available memory: " + std::to_string(availableGIB) + " GIB");
-  m_progressbar_mem_free.set_text("Free memory: " + std::to_string(freeGIB) + " GIB");
+  m_progressbar_mem_tot.set_text("Total memory: " + two_decimals_format(totGIB) + " GIB");
+  m_progressbar_mem_used.set_text("Memory used: " + two_decimals_format(usedGIB) + " GIB");
+  m_progressbar_mem_available.set_text("Available memory: " + two_decimals_format(availableGIB) + " GIB");
+  m_progressbar_mem_free.set_text("Free memory: " + two_decimals_format(freeGIB) + " GIB");
   
   m_progressbar_mem_tot.set_fraction(1.0);
   m_progressbar_mem_used.set_fraction(percentageUsed);
@@ -309,8 +322,8 @@ bool SystemMonitorWindow::update_nvidia_gpu_usage()
 {
   NvidiaData data = nvidia.calculateNvml();
 
-  m_progressbar_gpu_nvidia_gpuUtil.set_text("GPU util: " + std::to_string(data.gpuUtil) + " %");
-  m_progressbar_gpu_nvidia_memUtil.set_text("MEM util: " + std::to_string(data.memUtil) + " %");
+  m_progressbar_gpu_nvidia_gpuUtil.set_text("GPU util: " + two_decimals_format(data.gpuUtil) + " %");
+  m_progressbar_gpu_nvidia_memUtil.set_text("MEM util: " + two_decimals_format(data.memUtil) + " %");
   // m_progressbar_gpu_nvidia_totVram.set_text("Total Vram: " + std::to_string(data.totVram) + " %");
 
   m_progressbar_gpu_nvidia_gpuUtil.set_fraction(data.gpuUtil / 100);
@@ -325,8 +338,8 @@ bool SystemMonitorWindow::update_nvidia_gpu_usage()
     m_progressbar_gpu_nvidia_usedVram.set_fraction(usedFraction);
     m_progressbar_gpu_nvidia_freeVram.set_fraction(freeFraction);
 
-    m_progressbar_gpu_nvidia_usedVram.set_text("Used Vram: " + std::to_string(data.usedVram) + " GIB" + " / " + std::to_string(data.totVram) + " GIB");
-    m_progressbar_gpu_nvidia_freeVram.set_text("Free Vram: " + std::to_string(data.totVram - data.usedVram) + " GIB" + " / " + std::to_string(data.totVram) + " GIB");
+    m_progressbar_gpu_nvidia_usedVram.set_text("Used Vram: " + two_decimals_format(data.usedVram) + " GIB" + " / " + two_decimals_format(data.totVram) + " GIB");
+    m_progressbar_gpu_nvidia_freeVram.set_text("Free Vram: " + two_decimals_format(data.totVram - data.usedVram) + " GIB" + " / " + two_decimals_format(data.totVram) + " GIB");
   }
   else
   {
@@ -335,4 +348,11 @@ bool SystemMonitorWindow::update_nvidia_gpu_usage()
   }
   
   return true;
+}
+
+std::string SystemMonitorWindow::two_decimals_format(double value)
+{
+  std::stringstream ss;
+  ss << std::fixed << std::setprecision(2) << value;
+  return ss.str();
 }    
