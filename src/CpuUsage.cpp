@@ -43,23 +43,25 @@ std::vector<CpuPercentage> CpuUsage::calculate_cpu_thread_usage(std::vector<CpuD
   {
     return percentages; // return empty object if size is not equal.
   }
-  
   for (size_t i = 0; i < curr.size(); i++)
-  {
+    {
+      auto x = curr[i];
+      auto y = prev[i];
       CpuPercentage percentage;
       percentage.name = curr[i].label;
 
-      std::uint64_t prevIdle = prev[i].idle + prev[i].iowait;
-      std::uint64_t currIdle = curr[i].idle + curr[i].iowait;
+      std::uint64_t prevIdle = y.idle + y.iowait;
+      std::uint64_t currIdle = x.idle + x.iowait;
 
-      std::uint64_t prevTot = prev[i].user + prev[i].nice + prev[i].system + prev[i].idle + prev[i].iowait + prev[i].irq + prev[i].softirq + prev[i].steal;
+      std::uint64_t prevTot = y.user + y.nice + y.system + y.idle + y.iowait + y.irq + y.softirq + y.steal;
 
-      std::uint64_t currTot = curr[i].user + curr[i].nice + curr[i].system + curr[i].idle + curr[i].iowait + curr[i].irq + curr[i].softirq + curr[i].steal;
+      std::uint64_t currTot = x.user + x.nice + x.system + x.idle + x.iowait + x.irq + x.softirq + x.steal;
 
       double totalDelta = currTot - prevTot;
       double idleDelta = currIdle - prevIdle;
 
-      percentage.persentageUsed = (1.0 - (idleDelta / totalDelta)) * 100.0;
+      // TODO S = C
+      percentage.percentageUsed = (1.0 - (idleDelta / totalDelta)) * 100.0;
 
       percentages.push_back(percentage);
   }

@@ -15,7 +15,7 @@ class CpuPercentage
 {
   public:
   std::string name;
-  double persentageUsed;
+  double percentageUsed;
 };   
 
 class CpuUsage
