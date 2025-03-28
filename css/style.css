@@ -89,3 +89,19 @@ gpu-progressbar-nvidia-memUtil progress {
 .gpu-progressbar-nvidia-freeVram progress {
     background-color: black;
 }
+
+.net-progressbar-rx {
+    color: whitesmoke;
+}
+
+.net-progressbar-rx progress {
+    background-color: black;
+}
+
+.net-progressbar-tx {
+    color: whitesmoke;
+}
+
+.net-progressbar-tx {
+    background-color: black;
+}

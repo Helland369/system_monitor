@@ -1,10 +1,15 @@
 #include "include/NetInfo.hpp"
+#include <cstdint>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <vector>
 
 
 NetInfo::NetInfo() {}
@@ -45,4 +50,39 @@ IpData NetInfo::get_ip_address()
 
   freeifaddrs(ifaddr);
   return data;
-}    
+}
+
+std::vector<NetStats> NetInfo::get_network_stats()
+{
+  std::vector<NetStats> stats;
+  std::ifstream file("/proc/net/dev");
+  std::string line;
+
+  if (!file.is_open())
+  {
+    std::cerr << "Failed to open /proc/net/dev" << "\n";
+    return {};
+  }
+  
+  // skipping header lines
+  std::getline(file, line);
+  std::getline(file, line);
+
+  while (std::getline(file, line))
+  {
+    std::istringstream ss(line);
+    std::string iface;
+    std::getline(ss, iface, ':');
+    iface.erase(0, iface.find_first_not_of(" "));
+    
+    uint64_t rx_bytes, tx_bytes;
+    ss >> rx_bytes;
+
+    // skipping rx fields
+    for (int i = 0; i < 7; i++) ss >> tx_bytes;
+
+    stats.push_back({iface, rx_bytes, tx_bytes});
+  }
+
+  return stats;;
+}   
