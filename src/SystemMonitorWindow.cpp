@@ -391,14 +391,14 @@ bool SystemMonitorWindow::update_net_usage()
           uint64_t rx_diff = curr_stat.rx_bytes - prev_stat.rx_bytes;
           uint64_t tx_diff = curr_stat.tx_bytes - prev_stat.tx_bytes;
 
-          double rx_kb = rx_diff * 8;
-          double tx_kb = tx_diff * 8;
+          double rx_kb = rx_diff / 1024;
+          double tx_kb = tx_diff / 1024;
 
           constexpr double maxKbPerSec = 125.0 * 1024.0;
 
-          m_progressbar_net_rx.set_text("↓ " + two_decimals_format(rx_kb) + " Kbps");
+          m_progressbar_net_rx.set_text("↓ " + two_decimals_format(rx_kb) + " KB/s");
           m_progressbar_net_rx.set_fraction(std::min(rx_kb / maxKbPerSec, 1.0));
-          m_progressbar_net_tx.set_text("↑ " + two_decimals_format(tx_kb) + " Kbps");
+          m_progressbar_net_tx.set_text("↑ " + two_decimals_format(tx_kb) + " KB/s");
           m_progressbar_net_tx.set_fraction(std::min(tx_kb / maxKbPerSec, 1.0));
         //}
       }
