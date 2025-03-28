@@ -1,5 +1,6 @@
 #include "include/SystemMonitorWindow.hpp"
 #include "CpuUsage.hpp"
+#include "NetInfo.hpp"
 #include "NvidiaInfo.hpp"
 #include "glibmm/error.h"
 #include "glibmm/main.h"
@@ -10,7 +11,9 @@
 #include "gtkmm/object.h"
 #include "gtkmm/progressbar.h"
 #include "gtkmm/stylecontext.h"
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <gtkmm/cssprovider.h>
 #include <cstddef>
 #include <glibmm.h>
@@ -21,6 +24,7 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <utility>
 
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
@@ -119,7 +123,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_tot.set_margin(5);
   m_progressbar_mem_tot.set_halign(Gtk::Align::CENTER);
   m_progressbar_mem_tot.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_tot.set_size_request(100, -1);
   m_progressbar_mem_tot.set_show_text(true);
   m_progressbar_mem_tot.set_size_request(300, -1);
   m_progressbar_mem_tot.set_vexpand(true);
@@ -129,7 +132,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_used.set_margin(5);
   m_progressbar_mem_used.set_halign(Gtk::Align::CENTER);
   m_progressbar_mem_used.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_used.set_size_request(100, -1);
   m_progressbar_mem_used.set_show_text(true);
   m_progressbar_mem_used.set_size_request(300, -1);
   m_progressbar_mem_used.set_vexpand(true);
@@ -139,7 +141,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_available.set_margin(5);
   m_progressbar_mem_available.set_halign(Gtk::Align::CENTER);
   m_progressbar_mem_available.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_available.set_size_request(100, -1);
   m_progressbar_mem_available.set_show_text(true);
   m_progressbar_mem_available.set_size_request(300, -1);
   m_progressbar_mem_available.set_vexpand(true);
@@ -149,7 +150,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_free.set_margin(5);
   m_progressbar_mem_free.set_halign(Gtk::Align::CENTER);
   m_progressbar_mem_free.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_free.set_size_request(100, -1);
   m_progressbar_mem_free.set_show_text(true);
   m_progressbar_mem_free.set_size_request(300, -1);
   m_progressbar_mem_free.set_vexpand(true);
@@ -170,7 +170,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_gpuUtil.set_margin(5);
   m_progressbar_gpu_nvidia_gpuUtil.set_halign(Gtk::Align::CENTER);
   m_progressbar_gpu_nvidia_gpuUtil.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_gpuUtil.set_size_request(100, -1);
   m_progressbar_gpu_nvidia_gpuUtil.set_show_text(true);
   m_progressbar_gpu_nvidia_gpuUtil.set_size_request(300, -1);
   m_progressbar_gpu_nvidia_gpuUtil.set_vexpand(true);
@@ -180,7 +179,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_memUtil.set_margin(5);
   m_progressbar_gpu_nvidia_memUtil.set_halign(Gtk::Align::CENTER);
   m_progressbar_gpu_nvidia_memUtil.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_memUtil.set_size_request(100, -1);
   m_progressbar_gpu_nvidia_memUtil.set_show_text(true);
   m_progressbar_gpu_nvidia_memUtil.set_size_request(300, -1);
   m_progressbar_gpu_nvidia_memUtil.set_vexpand(true);
@@ -190,7 +188,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_usedVram.set_margin(5);
   m_progressbar_gpu_nvidia_usedVram.set_halign(Gtk::Align::CENTER);
   m_progressbar_gpu_nvidia_usedVram.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_usedVram.set_size_request(100, -1);
   m_progressbar_gpu_nvidia_usedVram.set_show_text(true);
   m_progressbar_gpu_nvidia_usedVram.set_size_request(300, -1);
   m_progressbar_gpu_nvidia_usedVram.set_vexpand(true);
@@ -200,7 +197,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_gpu_nvidia_freeVram.set_margin(5);
   m_progressbar_gpu_nvidia_freeVram.set_halign(Gtk::Align::CENTER);
   m_progressbar_gpu_nvidia_freeVram.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_freeVram.set_size_request(100, -1);
   m_progressbar_gpu_nvidia_freeVram.set_show_text(true);
   m_progressbar_gpu_nvidia_freeVram.set_size_request(300, -1);
   m_progressbar_gpu_nvidia_freeVram.set_vexpand(true);
@@ -217,6 +213,27 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   m_frame_net.set_child(m_box_net);
   m_frame_net.set_label(ipData.name + " " + ipData.addr);
+  m_box_net.append(m_progressbar_net_rx);
+  m_progressbar_net_rx.set_margin(5);
+  m_progressbar_net_rx.set_halign(Gtk::Align::CENTER);
+  m_progressbar_net_rx.set_valign(Gtk::Align::CENTER);
+  m_progressbar_net_rx.set_size_request(300, -1);
+  m_progressbar_net_rx.set_show_text(true);
+  m_progressbar_net_rx.set_vexpand(true);
+  m_progressbar_net_rx.set_hexpand(true);
+  m_progressbar_net_rx.add_css_class("net-progressbar-rx");
+
+  m_box_net.append(m_progressbar_net_tx);
+  m_progressbar_net_tx.set_margin(5);
+  m_progressbar_net_tx.set_halign(Gtk::Align::CENTER);
+  m_progressbar_net_tx.set_valign(Gtk::Align::CENTER);
+  m_progressbar_net_tx.set_size_request(300, -1);
+  m_progressbar_net_tx.set_show_text(true);
+  m_progressbar_net_tx.set_vexpand(true);
+  m_progressbar_net_tx.set_hexpand(true);
+  m_progressbar_net_tx.add_css_class("net-progressbar-tx");
+
+  Glib::signal_timeout().connect([this]() { return  update_net_usage(); }, 1000);
 
   m_VBox.append(m_frame_cpu);
   m_ram_gpu_box.set_spacing(5);
@@ -355,4 +372,38 @@ std::string SystemMonitorWindow::two_decimals_format(double value)
   std::stringstream ss;
   ss << std::fixed << std::setprecision(2) << value;
   return ss.str();
+}
+
+bool SystemMonitorWindow::update_net_usage()
+{
+  // std::thread([this]()
+  // {
+    static auto prev = netInfo.get_network_stats();
+    // std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    auto curr = netInfo.get_network_stats();
+
+    for (const auto& curr_stat : curr)
+    {
+      for (const auto& prev_stat : prev)
+      {
+        if (curr_stat.iface == "lo") continue;
+        //{
+          uint64_t rx_diff = curr_stat.rx_bytes - prev_stat.rx_bytes;
+          uint64_t tx_diff = curr_stat.tx_bytes - prev_stat.tx_bytes;
+
+          double rx_kb = rx_diff * 8;
+          double tx_kb = tx_diff * 8;
+
+          constexpr double maxKbPerSec = 125.0 * 1024.0;
+
+          m_progressbar_net_rx.set_text("↓ " + two_decimals_format(rx_kb) + " Kbps");
+          m_progressbar_net_rx.set_fraction(std::min(rx_kb / maxKbPerSec, 1.0));
+          m_progressbar_net_tx.set_text("↑ " + two_decimals_format(tx_kb) + " Kbps");
+          m_progressbar_net_tx.set_fraction(std::min(tx_kb / maxKbPerSec, 1.0));
+        //}
+      }
+    }
+    prev = std::move(curr);
+  // }).detach();
+  return true;
 }    
