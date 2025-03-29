@@ -132,8 +132,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_progressbar_mem_used.set_margin(5);
   m_progressbar_mem_used.set_halign(Gtk::Align::CENTER);
   m_progressbar_mem_used.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_used.set_show_text(true);
   m_progressbar_mem_used.set_size_request(300, -1);
+  m_progressbar_mem_used.set_show_text(true);
   m_progressbar_mem_used.set_vexpand(true);
   m_progressbar_mem_used.set_hexpand(true);
   
@@ -376,23 +376,26 @@ std::string SystemMonitorWindow::two_decimals_format(double value)
 
 bool SystemMonitorWindow::update_net_usage()
 {
-  // std::thread([this]()
-  // {
     static auto prev = netInfo.get_network_stats();
-    // std::this_thread::sleep_for(std::chrono::milliseconds(500));
     auto curr = netInfo.get_network_stats();
 
     for (const auto& curr_stat : curr)
     {
-      for (const auto& prev_stat : prev)
-      {
-        if (curr_stat.iface == "lo") continue;
-        //{
-          uint64_t rx_diff = curr_stat.rx_bytes - prev_stat.rx_bytes;
-          uint64_t tx_diff = curr_stat.tx_bytes - prev_stat.tx_bytes;
+      // for (const auto& prev_stat : prev)
+      // {
+      if (curr_stat.iface == "lo") continue;
 
-          double rx_kb = rx_diff / 1024;
-          double tx_kb = tx_diff / 1024;
+      auto prev_stat = std::find_if(prev.begin(), prev.end(),
+                                  [&curr_stat](const auto& stat) { return stat.iface == curr_stat.iface; });
+
+      if (prev_stat != prev.end())
+      {
+          
+          uint64_t rx_diff = curr_stat.rx_bytes - prev_stat->rx_bytes;
+          uint64_t tx_diff = curr_stat.tx_bytes - prev_stat->tx_bytes;
+
+          double rx_kb = rx_diff / 1024.0;
+          double tx_kb = tx_diff / 1024.0;
 
           constexpr double maxKbPerSec = 125.0 * 1024.0;
 
@@ -400,10 +403,8 @@ bool SystemMonitorWindow::update_net_usage()
           m_progressbar_net_rx.set_fraction(std::min(rx_kb / maxKbPerSec, 1.0));
           m_progressbar_net_tx.set_text("↑ " + two_decimals_format(tx_kb) + " KB/s");
           m_progressbar_net_tx.set_fraction(std::min(tx_kb / maxKbPerSec, 1.0));
-        //}
       }
     }
     prev = std::move(curr);
-  // }).detach();
   return true;
 }    
