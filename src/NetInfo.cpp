@@ -75,11 +75,12 @@ std::vector<NetStats> NetInfo::get_network_stats()
     std::getline(ss, iface, ':');
     iface.erase(0, iface.find_first_not_of(" "));
     
-    uint64_t rx_bytes, tx_bytes;
+    uint64_t rx_bytes, tx_bytes, temp;
     ss >> rx_bytes;
 
     // skipping rx fields
-    for (int i = 0; i < 7; i++) ss >> tx_bytes;
+    for (int i = 0; i < 7; i++) ss >> temp;
+    ss >> tx_bytes;
 
     stats.push_back({iface, rx_bytes, tx_bytes});
   }
