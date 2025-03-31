@@ -1,5 +1,6 @@
 #include "include/SystemMonitorWindow.hpp"
 #include "CpuUsage.hpp"
+#include "FileSystem.hpp"
 #include "NetInfo.hpp"
 #include "NvidiaInfo.hpp"
 #include "glibmm/error.h"
@@ -14,6 +15,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <gtkmm/cssprovider.h>
 #include <cstddef>
 #include <glibmm.h>
@@ -22,6 +24,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <sys/statvfs.h>
 #include <thread>
 #include <chrono>
 #include <utility>
@@ -29,7 +32,7 @@
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
       m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu(cpu.get_cpu_name()),
-      m_frame_ram("RAM"), m_frame_gpu(nvidia.get_nvidia_gpu_name()),
+      m_frame_ram("RAM"), m_frame_gpu(nvidia.get_nvidia_gpu_name()), m_frame_fs("Disks"),
       m_box_cpu(Gtk::Orientation::VERTICAL, 5),
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
@@ -235,12 +238,40 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   Glib::signal_timeout().connect([this]() { return  update_net_usage(); }, 1000);
 
+  m_frame_fs.set_child(m_box_fs);
+
+  auto mnts = filesSystem.get_mounted_file_system();
+  for (const auto &mnt : mnts)
+  {
+    if (mnt.device.find("/dev") == 0 && mnt.fsType != "tmpfs" && mnt.fsType != "proc" && mnt.fsType != "sysfs")
+    {
+      auto* bar = Gtk::make_managed<Gtk::ProgressBar>();
+      bar->set_margin(5);
+      bar->set_show_text(true);
+      bar->set_halign(Gtk::Align::CENTER);
+      bar->set_valign(Gtk::Align::CENTER);
+      bar->set_size_request(300, -1);
+      m_box_fs.append(*bar);
+      m_progressbar_fs.push_back({mnt.mountPoint, bar});
+    }
+  }    
+  
+  
+  Glib::signal_timeout().connect([this]() {
+    for (const auto& disk : m_progressbar_fs)
+    {
+      update_disk_usage(disk.mntPoint);
+    }
+    return true;
+  }, 1000);
+  
   m_VBox.append(m_frame_cpu);
   m_ram_gpu_box.set_spacing(5);
   m_ram_gpu_box.append(m_frame_ram);
   m_ram_gpu_box.append(m_frame_gpu);
   m_VBox.append(m_ram_gpu_box);
   m_VBox.append(m_frame_net);
+  m_VBox.append(m_frame_fs);
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
@@ -407,4 +438,34 @@ bool SystemMonitorWindow::update_net_usage()
     }
     prev = std::move(curr);
   return true;
-}    
+}
+
+bool SystemMonitorWindow::update_disk_usage(const std::string& path)
+{
+  struct statvfs stat;
+
+  if (statvfs(path.c_str(), &stat))
+  {
+    perror(("statvfs error for: " + path).c_str());
+    return true;
+  }
+
+  uint64_t tot = stat.f_blocks * stat.f_frsize;
+  uint64_t free = stat.f_bavail * stat.f_frsize;
+  uint64_t used = tot - free;
+
+  double usage = (double)used / (double)tot;
+
+  for (auto &disk : m_progressbar_fs)
+  {
+    if (disk.mntPoint == path)
+    {
+      disk.bar->set_fraction(usage);
+      disk.bar->set_text(path + ": " + two_decimals_format(usage * 100.0) + " % used");
+      disk.bar->add_css_class("disk-progress-bar");
+      break;
+    }
+  }    
+  
+  return true;
+}
