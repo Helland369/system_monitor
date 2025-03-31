@@ -18,6 +18,4 @@ public:
   ~FileSystem();
 
   std::vector<MountInfo> get_mounted_file_system();
-
-  void print_filesystem(const std::string& path);
 };

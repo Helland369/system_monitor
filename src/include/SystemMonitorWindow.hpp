@@ -15,6 +15,15 @@
 #include "gtkmm/csssection.h"
 #include "NvidiaInfo.hpp"
 #include "NetInfo.hpp"
+#include "FileSystem.hpp"
+
+class DiskUsage
+{
+public:
+  std::string mntPoint;
+  Gtk::ProgressBar* bar;
+};
+
 
 class SystemMonitorWindow : public Gtk::Window
 {
@@ -22,13 +31,14 @@ private:
   Gtk::Box m_HBox;
   Gtk::Box m_VBox;
   Gtk::Grid m_grid_cpu;
-  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_ram_gpu_box;
-  Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net;
+  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_ram_gpu_box, m_box_fs;
+  Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net, m_frame_fs;
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free, m_progressbar_net_rx, m_progressbar_net_tx;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;
+  std::vector<DiskUsage> m_progressbar_fs;
 
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section, const Glib::Error& error);
-  
+
   // CPU
   CpuUsage cpu;
   std::vector<CpuData> prev;
@@ -56,6 +66,10 @@ private:
   NetInfo netInfo;
   IpData ipData;
   bool update_net_usage();
+
+  // disks / filesystem
+  FileSystem filesSystem;
+  bool update_disk_usage(const std::string& path);
 
   // formating
   std::string two_decimals_format(double value);
