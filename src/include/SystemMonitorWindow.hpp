@@ -31,7 +31,7 @@ private:
   Gtk::Box m_HBox;
   Gtk::Box m_VBox;
   Gtk::Grid m_grid_cpu;
-  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_ram_gpu_box, m_box_fs;
+  Gtk::Box m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_box_fs, m_ram_fs_box, m_gpu_net_box;
   Gtk::Frame m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net, m_frame_fs;
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free, m_progressbar_net_rx, m_progressbar_net_tx;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;

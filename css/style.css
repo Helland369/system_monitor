@@ -98,6 +98,14 @@ gpu-progressbar-nvidia-memUtil progress {
     background-color: black;
 }
 
+.net-progressbar-tx {
+    color: whitesmoke;
+}
+
+.net-progressbar-tx progress {
+    background-color: black;
+}
+
 .disk-progress-bar {
     color: whitesmoke;
 }
