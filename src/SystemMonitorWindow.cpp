@@ -32,11 +32,13 @@
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
       m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu(cpu.get_cpu_name()),
-      m_frame_ram("RAM"), m_frame_gpu(nvidia.get_nvidia_gpu_name()), m_frame_fs("Disks"),
-      m_box_cpu(Gtk::Orientation::VERTICAL, 5),
+      m_frame_ram("mem"), m_frame_gpu(nvidia.get_nvidia_gpu_name()),
+      m_frame_fs("disks"), m_box_cpu(Gtk::Orientation::VERTICAL, 5),
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
-      m_ram_gpu_box(Gtk::Orientation::HORIZONTAL)
+      m_ram_fs_box(Gtk::Orientation::HORIZONTAL, 5),
+      m_box_fs(Gtk::Orientation::VERTICAL, 5),
+      m_box_net(Gtk::Orientation::VERTICAL, 5)      
 {
   // get ip data
   ipData = netInfo.get_ip_address();
@@ -72,7 +74,6 @@ SystemMonitorWindow::SystemMonitorWindow()
     prog_bar->set_show_text(true);prog_bar->set_hexpand();
     prog_bar->set_vexpand();
     prog_bar->set_valign(Gtk::Align::CENTER);
-
 
     int col = i % 3;
     int row = i / 3;
@@ -251,12 +252,14 @@ SystemMonitorWindow::SystemMonitorWindow()
       bar->set_halign(Gtk::Align::CENTER);
       bar->set_valign(Gtk::Align::CENTER);
       bar->set_size_request(300, -1);
+      bar->set_show_text(true);
+      bar->set_vexpand(true);
+      bar->set_hexpand(true);
       m_box_fs.append(*bar);
       m_progressbar_fs.push_back({mnt.mountPoint, bar});
     }
   }    
-  
-  
+
   Glib::signal_timeout().connect([this]() {
     for (const auto& disk : m_progressbar_fs)
     {
@@ -264,14 +267,16 @@ SystemMonitorWindow::SystemMonitorWindow()
     }
     return true;
   }, 1000);
-  
+
   m_VBox.append(m_frame_cpu);
-  m_ram_gpu_box.set_spacing(5);
-  m_ram_gpu_box.append(m_frame_ram);
-  m_ram_gpu_box.append(m_frame_gpu);
-  m_VBox.append(m_ram_gpu_box);
-  m_VBox.append(m_frame_net);
-  m_VBox.append(m_frame_fs);
+  m_gpu_net_box.set_spacing(5);
+  m_gpu_net_box.append(m_frame_gpu);
+  m_gpu_net_box.append(m_frame_net);
+  m_VBox.append(m_gpu_net_box);
+  m_ram_fs_box.set_spacing(5);
+  m_ram_fs_box.append(m_frame_ram);
+  m_ram_fs_box.append(m_frame_fs);
+  m_VBox.append(m_ram_fs_box);
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
