@@ -12,7 +12,7 @@ A simple system monitor project in C++ and GTK / GTKmm
 [ninja](https://ninja-build.org/)
 [gcc/g++](https://gcc.gnu.org/)
 
-### You can allso use your faovorite package manager
+### You can also use your favorite package manager
 
 On Arch you would use pacman:
 
@@ -46,7 +46,7 @@ cd to build
 cd /build
 ```
 
-run the programm
+run the program
 
 ```
 ./system_monitor
