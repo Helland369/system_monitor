@@ -10,10 +10,13 @@
 
 .cpu-progress-bar {
     color: whitesmoke;
+    min-height: 30px;
+    padding: 6px;
 }
 
 .cpu-progress-bar progress {
     background-color: black;
+    border-radius: 4px;
 }
 
 .ram-frame {

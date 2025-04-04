@@ -73,11 +73,12 @@ SystemMonitorWindow::SystemMonitorWindow()
     prog_bar->set_margin(5);
     prog_bar->set_halign(Gtk::Align::CENTER);
     prog_bar->set_valign(Gtk::Align::CENTER);
-    // prog_bar->set_size_request(100, -1);
+    prog_bar->set_size_request(300, 50);
     prog_bar->set_text("CPU" + std::to_string(i));
-    prog_bar->set_show_text(true);prog_bar->set_hexpand();
-    prog_bar->set_vexpand();
-    prog_bar->set_valign(Gtk::Align::CENTER);
+    prog_bar->set_show_text(true);
+    prog_bar->set_hexpand(true);
+    prog_bar->set_vexpand(true);
+    prog_bar->set_valign(Gtk::Align::FILL);
 
     int col = i % 3;
     int row = i / 3;
