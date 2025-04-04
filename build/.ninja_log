@@ -17,3 +17,6 @@
 1768	1936	1743509992325886412	system_monitor	de0b8ada474e9755
 6	1823	1743510027624182102	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c6fe9d711cd8719
 1823	1985	1743510029441197323	system_monitor	de0b8ada474e9755
+16	1449	1743756579060924111	CMakeFiles/system_monitor.dir/src/main.cpp.o	592eba2738aeb789
+16	1916	1743756579060108782	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	6c6fe9d711cd8719
+1916	2123	1743756580960123186	system_monitor	de0b8ada474e9755

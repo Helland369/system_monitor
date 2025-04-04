@@ -16,6 +16,8 @@
 #include "NvidiaInfo.hpp"
 #include "NetInfo.hpp"
 #include "FileSystem.hpp"
+#include "gtkmm/widget.h"
+#include <gtkmm-4.0/gtkmm/eventcontrollerkey.h>
 
 class DiskUsage
 {
@@ -36,6 +38,12 @@ private:
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil, m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram, m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram, m_progressbar_mem_tot, m_progressbar_mem_used, m_progressbar_mem_available, m_progressbar_mem_free, m_progressbar_net_rx, m_progressbar_net_tx;
   std::vector<Gtk::ProgressBar*> m_progressbar_cpu;
   std::vector<DiskUsage> m_progressbar_fs;
+
+  // key events
+
+  Glib::RefPtr<Gtk::EventControllerKey> key_controller;
+
+  // css
 
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section, const Glib::Error& error);
 

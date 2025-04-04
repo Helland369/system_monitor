@@ -3,12 +3,16 @@
 #include "FileSystem.hpp"
 #include "NetInfo.hpp"
 #include "NvidiaInfo.hpp"
+#include "gdk/gdkkeysyms.h"
+#include "gdkmm/enums.h"
+#include "glib.h"
 #include "glibmm/error.h"
 #include "glibmm/main.h"
 #include "glibmm/refptr.h"
 #include "gtk/gtk.h"
 #include "gtkmm/csssection.h"
 #include "gtkmm/enums.h"
+#include "gtkmm/eventcontrollerkey.h"
 #include "gtkmm/object.h"
 #include "gtkmm/progressbar.h"
 #include "gtkmm/stylecontext.h"
@@ -38,7 +42,7 @@ SystemMonitorWindow::SystemMonitorWindow()
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
       m_ram_fs_box(Gtk::Orientation::HORIZONTAL, 5),
       m_box_fs(Gtk::Orientation::VERTICAL, 5),
-      m_box_net(Gtk::Orientation::VERTICAL, 5)      
+      m_box_net(Gtk::Orientation::VERTICAL, 5)
 {
   // get ip data
   ipData = netInfo.get_ip_address();
@@ -277,6 +281,37 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_ram_fs_box.append(m_frame_ram);
   m_ram_fs_box.append(m_frame_fs);
   m_VBox.append(m_ram_fs_box);
+
+  // key event / change boxes you see
+
+  key_controller = Gtk::EventControllerKey::create();
+
+  key_controller->signal_key_pressed().connect([this](guint keyval, guint keycode, Gdk::ModifierType state)-> bool {
+    switch (keyval)
+    {
+    case GDK_KEY_1:
+      m_frame_cpu.set_visible(!m_frame_cpu.get_visible());
+      break;
+    case GDK_KEY_2:
+      m_frame_ram.set_visible(!m_frame_ram.get_visible());
+      break;
+    case GDK_KEY_3:
+      m_frame_gpu.set_visible(!m_frame_gpu.get_visible());
+      break;
+    case GDK_KEY_4:
+      m_frame_fs.set_visible(!m_frame_fs.get_visible());
+    case GDK_KEY_5:
+      m_frame_net.set_visible(!m_frame_net.get_visible());
+      break;
+    }
+    return true;
+  },
+  false
+);
+
+  add_controller(key_controller);
+  
+  // css
 
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
