@@ -5,14 +5,14 @@
 - [About](#About)
 - [Image](#Image)
 - [Installation](#Installation)
-  - [Dependencies](##Dependencies)
+  - [Dependencies](#Dependencies)
 - [Documentation](#Documentation)
-  - [Overview](##Overview)
-  - [How it works](##How-it-works)
-  - [Code structure](##Code-structure)
-  - [Running the program](##Running-the-program)
-  - [Testing](##Testing) 
-  - [Known Limitations](##Known-Limitations)
+  - [Overview](#Overview)
+  - [How it works](#How-it-works)
+  - [Code structure](#Code-structure)
+  - [Running the program](#Running-the-program)
+  - [Testing](#Testing) 
+  - [Known Limitations](#Known-Limitations)
 
 # About
 
