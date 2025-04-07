@@ -20,9 +20,9 @@ public:
   NvidiaInfo();
   ~NvidiaInfo();
 
-  void checkNvml(nvmlReturn_t result, const char* msg);
+  void check_nvml(nvmlReturn_t result, const char* msg);
 
-  NvidiaData calculateNvml();
+  NvidiaData calculate_nvml();
 
   std::string get_nvidia_gpu_name();
 };

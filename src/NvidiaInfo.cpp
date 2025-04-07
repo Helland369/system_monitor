@@ -7,7 +7,7 @@ NvidiaInfo::NvidiaInfo() {}
 
 NvidiaInfo::~NvidiaInfo() {}
 
-void NvidiaInfo::checkNvml(nvmlReturn_t result, const char* msg)
+void NvidiaInfo::check_nvml(nvmlReturn_t result, const char* msg)
 {
   if (result != NVML_SUCCESS)
   {
@@ -16,28 +16,28 @@ void NvidiaInfo::checkNvml(nvmlReturn_t result, const char* msg)
   }
 }
 
-NvidiaData NvidiaInfo::calculateNvml()
+NvidiaData NvidiaInfo::calculate_nvml()
 {
   NvidiaData data;
 
   nvmlReturn_t result;
   result = nvmlInit();
-  checkNvml(result, "Initializing NVML");
+  check_nvml(result, "Initializing NVML");
 
   nvmlDevice_t device;
   result = nvmlDeviceGetHandleByIndex(0, &device);
-  checkNvml(result, "Getting GPU handle");
+  check_nvml(result, "Getting GPU handle");
 
   std::uint16_t gpuUtil, memUtil;
   result = nvmlDeviceGetUtilizationRates(device, &utililization);
-  checkNvml(result, "Getting GPU utilization");
+  check_nvml(result, "Getting GPU utilization");
 
   data.gpuUtil = utililization.gpu;
   data.memUtil = utililization.memory;
 
   nvmlMemory_t memory;
   result = nvmlDeviceGetMemoryInfo(device, &memory);
-  checkNvml(result, "Getting GPU memory info");
+  check_nvml(result, "Getting GPU memory info");
 
   data.totVram = memory.total / (1024.0 * 1024 * 1024);
   data.usedVram = memory.used / (1024.0 * 1024 * 1024);
@@ -52,14 +52,14 @@ std::string NvidiaInfo::get_nvidia_gpu_name()
 
   nvmlReturn_t result;
   result = nvmlInit();
-  checkNvml(result, "Initializing NVML");
+  check_nvml(result, "Initializing NVML");
 
   nvmlDevice_t device;
   result = nvmlDeviceGetHandleByIndex(0, &device);
-  checkNvml(result, "Getting GPU handle");
+  check_nvml(result, "Getting GPU handle");
 
   result = nvmlDeviceGetName(device, name, NVML_DEVICE_NAME_BUFFER_SIZE);
-  checkNvml(result, "Getting GPU name");
+  check_nvml(result, "Getting GPU name");
 
   std::string Name = name;
 

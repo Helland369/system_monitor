@@ -75,11 +75,11 @@ private:
   IpData ipData;
   bool update_net_usage();
 
-  // disks / filesystem
+  // disks / file-system
   FileSystem filesSystem;
   bool update_disk_usage(const std::string& path);
 
-  // formating
+  // formatting
   std::string two_decimals_format(double value);
   
 public:

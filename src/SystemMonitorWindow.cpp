@@ -409,7 +409,7 @@ bool SystemMonitorWindow::update_mem_usage()
 
 bool SystemMonitorWindow::update_nvidia_gpu_usage()
 {
-  NvidiaData data = nvidia.calculateNvml();
+  NvidiaData data = nvidia.calculate_nvml();
 
   m_progressbar_gpu_nvidia_gpuUtil.set_text("GPU util: " + two_decimals_format(data.gpuUtil) + " %");
   m_progressbar_gpu_nvidia_memUtil.set_text("MEM util: " + two_decimals_format(data.memUtil) + " %");
