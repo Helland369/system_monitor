@@ -2,7 +2,6 @@
 #include "CpuUsage.hpp"
 #include "FileSystem.hpp"
 #include "NetInfo.hpp"
-#include "NvidiaInfo.hpp"
 #include "gdk/gdkkeysyms.h"
 #include "gdkmm/enums.h"
 #include "glib.h"
@@ -17,7 +16,6 @@
 #include "gtkmm/progressbar.h"
 #include "gtkmm/stylecontext.h"
 #include <algorithm>
-#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <gtkmm/cssprovider.h>
@@ -33,10 +31,16 @@
 #include <chrono>
 #include <utility>
 
+#ifdef HAVE_NVML
+#include "NvidiaInfo.hpp"
+#endif
+
 SystemMonitorWindow::SystemMonitorWindow()
     : m_VBox(Gtk::Orientation::VERTICAL, 5),
       m_HBox(Gtk::Orientation::HORIZONTAL, 5), m_frame_cpu(cpu.get_cpu_name()),
+#ifdef HAVE_NVML
       m_frame_ram("mem"), m_frame_gpu(nvidia.get_nvidia_gpu_name()),
+#endif      
       m_frame_fs("disks"), m_box_cpu(Gtk::Orientation::VERTICAL, 5),
       m_box_gpu(Gtk::Orientation::VERTICAL, 5),
       m_box_ram(Gtk::Orientation::VERTICAL, 5),
@@ -173,6 +177,7 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   update_mem_usage();
 
+#ifdef HAVE_NVML  
   m_frame_gpu.set_child(m_box_gpu);
   m_frame_gpu.add_css_class("gpu-frame");
   m_box_gpu.append(m_progressbar_gpu_nvidia_gpuUtil);
@@ -219,7 +224,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   Glib::signal_timeout().connect([this]() { return update_nvidia_gpu_usage(); }, 1000);
 
   update_nvidia_gpu_usage();
-
+#endif
+  
   m_frame_net.set_child(m_box_net);
   m_frame_net.set_label(ipData.name + " " + ipData.addr);
   m_box_net.append(m_progressbar_net_rx);
@@ -407,6 +413,7 @@ bool SystemMonitorWindow::update_mem_usage()
   return true;
 }
 
+#ifdef HAVE_NVML
 bool SystemMonitorWindow::update_nvidia_gpu_usage()
 {
   NvidiaData data = nvidia.calculate_nvml();
@@ -438,6 +445,7 @@ bool SystemMonitorWindow::update_nvidia_gpu_usage()
   
   return true;
 }
+#endif
 
 std::string SystemMonitorWindow::two_decimals_format(double value)
 {

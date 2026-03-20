@@ -13,11 +13,14 @@
 #include "glibmm/refptr.h"
 #include "gtkmm/cssprovider.h"
 #include "gtkmm/csssection.h"
-#include "NvidiaInfo.hpp"
 #include "NetInfo.hpp"
 #include "FileSystem.hpp"
 #include "gtkmm/widget.h"
 #include <gtkmm-4.0/gtkmm/eventcontrollerkey.h>
+
+#ifdef HAVE_NVML
+#include "NvidiaInfo.hpp"
+#endif
 
 class DiskUsage
 {
@@ -65,10 +68,11 @@ private:
   
   bool update_mem_usage();
 
+#ifdef HAVE_NVML
   // Nvidia GPU
   NvidiaInfo nvidia;
-
-  bool update_nvidia_gpu_usage();
+  bool update_nvidia_gpu_usage();  
+#endif
 
   // net
   NetInfo netInfo;

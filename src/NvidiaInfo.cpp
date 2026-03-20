@@ -1,3 +1,4 @@
+#ifdef HAVE_NVML
 #include "include/NvidiaInfo.hpp"
 #include <cstdint>
 #include <cstdlib>
@@ -65,3 +66,4 @@ std::string NvidiaInfo::get_nvidia_gpu_name()
 
   return Name;
 }    
+#endif

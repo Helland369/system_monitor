@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HAVE_NVML
 #include <nvml.h>
 #include <string>
 
@@ -26,3 +27,4 @@ public:
 
   std::string get_nvidia_gpu_name();
 };
+#endif

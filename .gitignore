@@ -14,3 +14,8 @@ build/compile_commands.json
 build/CTestTestfile.cmake
 build/_deps
 build/CMakeUserPresets.json
+build/.ninja_deps
+build/.ninja_log
+
+
+compile_commands.json
