@@ -10,6 +10,11 @@ pkg_check_modules(GTKMM REQUIRED gtkmm-4.0)
 find_library(NVML_LIBRARY nvidia-ml)
 find_path(NVML_INCLUDE_DIR nvml.h PATHS /usr/include /opt/cuda/include)
 
+# Find rocm_smi
+#find_library(ROCM_SMI_LIBRARY lamd_smi)
+find_library(ROCM_SMI_LIBRARY rocm_smi64 PATH /opt/rocm/lib /opt/rocm/lib64)
+find_path(ROCM_SMI_INCLUDE_DIR rocm_smi/rocm_smi.h PATH /opt/rocm/include)
+
 # Automatically find all .cpp files
 file(GLOB SRC_FILES src/*.cpp)
 
@@ -21,6 +26,16 @@ target_include_directories(system_monitor PRIVATE ${GTKMM_INCLUDE_DIRS} src/incl
 
 # Link GTKMM and NVML
 target_link_libraries(system_monitor PRIVATE ${GTKMM_LIBRARIES})
+
+#if amd include it
+if (ROCM_SMI_LIBRARY AND ROCM_SMI_INCLUDE_DIR)
+  target_include_directories(system_monitor PRIVATE ${ROCM_SMI_INCLUDE_DIR})
+  target_link_libraries(system_monitor PRIVATE ${ROCM_SMI_LIBRARY})
+  target_compile_definitions(system_monitor PRIVATE HAVE_ROCM_SMI=1)
+  message(STATUS "ROCM_SMI foud, building with AMD GPU support!")
+else()
+  message(STATUS "ROCM_SMI not found, building without AMD GPU support!")
+endif()
 
 # if nvidia include it
 if(NVML_LIBRARY AND NVML_INCLUDE_DIR)

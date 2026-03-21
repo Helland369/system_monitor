@@ -1,11 +1,10 @@
 # ninja log v7
-1	13	1774025473681826242	CMakeFiles/system_monitor.dir/src/NvidiaInfo.cpp.o	91f6035f7d98b8ff
-1	317	1774025473681594919	CMakeFiles/system_monitor.dir/src/MemInfo.cpp.o	c938a12e93d57e3b
-1	346	1774025473681486758	CMakeFiles/system_monitor.dir/src/FileSystem.cpp.o	124699d094be1212
-1	361	1774025473681722651	CMakeFiles/system_monitor.dir/src/NetInfo.cpp.o	ade232243df38c7f
-1	403	1774025473680871025	CMakeFiles/system_monitor.dir/src/CpuUsage.cpp.o	b86572f0190b1002
-2	1242	1774025473682073704	CMakeFiles/system_monitor.dir/src/main.cpp.o	3879c39459cf6c43
-2	1778	1774025473681871035	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	b314114d8ee43f97
-3	1216	1774025625616343981	CMakeFiles/system_monitor.dir/src/main.cpp.o	3879c39459cf6c43
-3	1699	1774025742682497478	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	b314114d8ee43f97
-1699	1878	1774025744378513803	system_monitor	25b9a03326a1df49
+1	12	1774121866168085083	CMakeFiles/system_monitor.dir/src/NvidiaInfo.cpp.o	d5d8a675d22ea918
+1	281	1774121866167814730	CMakeFiles/system_monitor.dir/src/MemInfo.cpp.o	54cd7eae4d80da24
+1	285	1774121866166819920	CMakeFiles/system_monitor.dir/src/AmdInfo.cpp.o	66f52ada7bfcd86c
+1	336	1774121866167698699	CMakeFiles/system_monitor.dir/src/FileSystem.cpp.o	b7c221e53545050b
+1	355	1774121866167972482	CMakeFiles/system_monitor.dir/src/NetInfo.cpp.o	bc7b4237aab5b4cd
+1	382	1774121866167562248	CMakeFiles/system_monitor.dir/src/CpuUsage.cpp.o	538a45bef76f9dc8
+2	1241	1774121866168369686	CMakeFiles/system_monitor.dir/src/main.cpp.o	272430cd558e7a67
+3	1758	1774121988261058410	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	82a88326620c6d71
+1758	1957	1774121990016076210	system_monitor	2ca83c7eae6b0b40
