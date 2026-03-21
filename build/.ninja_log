@@ -8,3 +8,12 @@
 2	1241	1774121866168369686	CMakeFiles/system_monitor.dir/src/main.cpp.o	272430cd558e7a67
 3	1758	1774121988261058410	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	82a88326620c6d71
 1758	1957	1774121990016076210	system_monitor	2ca83c7eae6b0b40
+4	15	1774123787174639258	CMakeFiles/system_monitor.dir/src/NvidiaInfo.cpp.o	d5d8a675d22ea918
+3	284	1774123787172508276	CMakeFiles/system_monitor.dir/src/AmdInfo.cpp.o	66f52ada7bfcd86c
+4	286	1774123787174403826	CMakeFiles/system_monitor.dir/src/MemInfo.cpp.o	54cd7eae4d80da24
+4	331	1774123787174293785	CMakeFiles/system_monitor.dir/src/FileSystem.cpp.o	b7c221e53545050b
+4	359	1774123787174522807	CMakeFiles/system_monitor.dir/src/NetInfo.cpp.o	bc7b4237aab5b4cd
+3	381	1774123787174152253	CMakeFiles/system_monitor.dir/src/CpuUsage.cpp.o	538a45bef76f9dc8
+4	1235	1774123787174868450	CMakeFiles/system_monitor.dir/src/main.cpp.o	272430cd558e7a67
+4	1791	1774123787174757829	CMakeFiles/system_monitor.dir/src/SystemMonitorWindow.cpp.o	82a88326620c6d71
+1791	1990	1774123788960526480	system_monitor	2ca83c7eae6b0b40
