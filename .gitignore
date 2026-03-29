@@ -16,7 +16,7 @@ build/_deps
 build/CMakeUserPresets.json
 build/.ninja_deps
 build/.ninja_log
-
+/build
 
 compile_commands.json
 .clangd
