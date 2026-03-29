@@ -420,8 +420,7 @@ bool SystemMonitorWindow::update_cpu_progress_bar()
                   cpuUsageData.push_back(usage.percentageUsed);
                 }
 
-                m_dispatcher.emit();
-              })
+                m_dispatcher.emit(); })
     .detach();
 
   return true;
