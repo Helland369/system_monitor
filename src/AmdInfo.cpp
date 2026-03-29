@@ -19,10 +19,11 @@ AmdInfo::~AmdInfo()
 
 void AmdInfo::check_rocm_smi(rsmi_status_t status, std::string msg)
 {
-  if (status != RSMI_STATUS_SUCCESS) {
+  if (status != RSMI_STATUS_SUCCESS)
+  {
     std::cerr << "Error: " << msg << " - " << status << "\n";
     exit(0);
-  }    
+  }
 }
 
 AmdData AmdInfo::calculate_rocm_smi()

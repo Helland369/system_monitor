@@ -8,20 +8,19 @@ class NvidiaData
 {
 public:
   double gpuUtil, memUtil, totVram, usedVram, freeVram;
-};   
-
+};
 
 class NvidiaInfo
 {
 private:
-  unsigned int x = 1;
+  unsigned int      x = 1;
   nvmlUtilization_t utililization;
+
 public:
-  
   NvidiaInfo();
   ~NvidiaInfo();
 
-  void check_nvml(nvmlReturn_t result, const char* msg);
+  void check_nvml(nvmlReturn_t result, const char *msg);
 
   NvidiaData calculate_nvml();
 

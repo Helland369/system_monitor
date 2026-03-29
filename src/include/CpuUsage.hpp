@@ -7,24 +7,21 @@
 class CpuData
 {
 public:
-  std::string label;
-  std::uint64_t user, nice, system, idle, iowait, irq, softirq, steal, guest ,guest_nice;
+  std::string   label;
+  std::uint64_t user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice;
 };
 
 class CpuPercentage
 {
-  public:
+public:
   std::string name;
-  double percentageUsed;
-};   
+  double      percentageUsed;
+};
 
 class CpuUsage
 {
-
 private:
-
 public:
-
   CpuUsage();
   ~CpuUsage();
 

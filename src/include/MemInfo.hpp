@@ -6,13 +6,12 @@ class MemData
 {
 public:
   std::uint64_t memTotal, memFree, memAvailable;
-};   
+};
 
 class MemInfo
 {
 private:
 public:
-
   MemInfo();
   ~MemInfo();
 

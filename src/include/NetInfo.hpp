@@ -14,7 +14,7 @@ class NetStats
 {
 public:
   std::string iface;
-  uint64_t rx_bytes, tx_bytes;
+  uint64_t    rx_bytes, tx_bytes;
 };
 
 class NetInfo

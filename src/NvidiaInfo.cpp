@@ -4,11 +4,15 @@
 #include <cstdlib>
 #include <iostream>
 
-NvidiaInfo::NvidiaInfo() {}
+NvidiaInfo::NvidiaInfo()
+{
+}
 
-NvidiaInfo::~NvidiaInfo() {}
+NvidiaInfo::~NvidiaInfo()
+{
+}
 
-void NvidiaInfo::check_nvml(nvmlReturn_t result, const char* msg)
+void NvidiaInfo::check_nvml(nvmlReturn_t result, const char *msg)
 {
   if (result != NVML_SUCCESS)
   {
@@ -65,5 +69,5 @@ std::string NvidiaInfo::get_nvidia_gpu_name()
   std::string Name = name;
 
   return Name;
-}    
+}
 #endif

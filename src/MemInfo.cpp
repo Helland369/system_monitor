@@ -4,22 +4,19 @@
 #include <sstream>
 #include <string>
 
-
 MemInfo::MemInfo()
 {
-  
 }
 
 MemInfo::~MemInfo()
 {
-
 }
 
 MemData MemInfo::get_mem_data()
 {
   std::ifstream file("/proc/meminfo");
-  std::string line;
-  MemData data;
+  std::string   line;
+  MemData       data;
 
   if (file.is_open())
   {
@@ -28,9 +25,9 @@ MemData MemInfo::get_mem_data()
       if (std::getline(file, line))
       {
         std::istringstream ss(line);
-        std::string name;
-        std::uint64_t value;
-        std::string units;
+        std::string        name;
+        std::uint64_t      value;
+        std::string        units;
 
         ss >> name >> value >> units;
 
