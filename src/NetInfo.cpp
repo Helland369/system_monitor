@@ -1,14 +1,14 @@
 #include "include/NetInfo.hpp"
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
 #include <vector>
 
 NetInfo::NetInfo()
