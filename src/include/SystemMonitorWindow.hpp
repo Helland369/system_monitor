@@ -1,22 +1,22 @@
 #pragma once
 
 #include "MemInfo.hpp"
+#include "CpuUsage.hpp"
+#include "NetInfo.hpp"
+#include "FileSystem.hpp"
 #include <gtkmm-4.0/gtkmm/window.h>
 #include <gtkmm-4.0/gtkmm/frame.h>
 #include <gtkmm-4.0/gtkmm/box.h>
 #include <gtkmm-4.0/gtkmm/progressbar.h>
 #include <gtkmm-4.0/gtkmm/grid.h>
-#include <glibmm/dispatcher.h>
-#include <vector>
-#include "CpuUsage.hpp"
-#include "glibmm/error.h"
-#include "glibmm/refptr.h"
+#include <gtkmm-4.0/gtkmm/eventcontrollerkey.h>
 #include "gtkmm/cssprovider.h"
 #include "gtkmm/csssection.h"
-#include "NetInfo.hpp"
-#include "FileSystem.hpp"
 #include "gtkmm/widget.h"
-#include <gtkmm-4.0/gtkmm/eventcontrollerkey.h>
+#include <glibmm/dispatcher.h>
+#include "glibmm/error.h"
+#include "glibmm/refptr.h"
+#include <vector>
 
 #ifdef HAVE_NVML
 #include "NvidiaInfo.hpp"
@@ -24,6 +24,10 @@
 
 #ifdef HAVE_ROCM_SMI
 #include "AmdInfo.hpp"
+#endif
+
+#if HAVE_NVML || HAVE_ROCM_SMI
+#include "GpuInfo.hpp"
 #endif
 
 class DiskUsage
@@ -42,15 +46,21 @@ private:
   Gtk::Box         m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_box_fs, m_ram_fs_box, m_gpu_net_box;
   Gtk::Frame       m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net, m_frame_fs;
   Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil,
-    m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram,
-    m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram,
+    // m_progressbar_gpu_nvidia_memUtil, m_progressbar_gpu_nvidia_totVram,
+    // m_progressbar_gpu_nvidia_usedVram, m_progressbar_gpu_nvidia_freeVram,
     m_progressbar_mem_tot, m_progressbar_mem_used,
     m_progressbar_mem_available, m_progressbar_mem_free, m_progressbar_net_rx,
-    m_progressbar_net_tx, m_progress_gpu_amd_util, m_progress_gpu_amd_mem_util,
-    m_progress_gpu_amd_tot_vram, m_progress_gpu_amd_used_vram, m_progress_gpu_amd_free_vram;
+    m_progressbar_net_tx;
+    // m_progress_gpu_amd_util, m_progress_gpu_amd_mem_util,
+    // m_progress_gpu_amd_tot_vram, m_progress_gpu_amd_used_vram, m_progress_gpu_amd_free_vram;
 
-  std::vector<Gtk::ProgressBar *> m_progressbar_cpu;
-  std::vector<DiskUsage>          m_progressbar_fs;
+  std::vector<Gtk::ProgressBar *> m_progressbar_cpu,
+    m_progressbar_gpu_util,
+    m_progressbar_gpu_mem_util,
+    m_progressbar_gpu_tot_vram,
+    m_progressbar_gpu_used_vram,
+    m_progressbar_gpu_free_vram;
+  std::vector<DiskUsage> m_progressbar_fs;
 
   // key events
 
@@ -73,20 +83,25 @@ private:
   Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
 
   // mem
-
   MemInfo memInfo;
 
   bool update_mem_usage();
 
-#ifdef HAVE_NVML
-  NvidiaInfo nvidia;
-  bool       update_nvidia_gpu_usage();
-#endif
+// #ifdef HAVE_NVML
+//   NvidiaInfo nvidia;
+//   bool       update_nvidia_gpu_usage();
+// #endif
 
-#ifdef HAVE_ROCM_SMI
-  AmdInfo amd;
-  AmdData amd_data;
-  bool    update_amd_gpu_usage();
+// #ifdef HAVE_ROCM_SMI
+//   AmdInfo amd;
+//   AmdData amd_data;
+//   bool    update_amd_gpu_usage();
+// #endif
+
+#if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
+  GpuInfo   gpu;
+  std::vector<GpuData> gpu_data;
+  bool      update_gpu();
 #endif
 
   // net

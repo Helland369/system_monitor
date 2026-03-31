@@ -31,25 +31,12 @@
 #include <chrono>
 #include <utility>
 
-#ifdef HAVE_NVML
-#include "NvidiaInfo.hpp"
-#endif
-
 SystemMonitorWindow::SystemMonitorWindow()
   : m_VBox(Gtk::Orientation::VERTICAL, 5)
   , m_HBox(Gtk::Orientation::HORIZONTAL, 5)
-  , m_frame_cpu(cpu.get_cpu_name())
+  , m_frame_cpu("CPU")
   , m_frame_ram("mem")
-  ,
-#ifdef HAVE_NVML
-  m_frame_gpu(nvidia.get_nvidia_gpu_name())
-  ,
-#endif
-#ifdef HAVE_ROCM_SMI
-  m_frame_gpu("AMD-GPU")
-  ,
-#endif
-  m_frame_fs("disks")
+  , m_frame_fs("disks")
   , m_box_cpu(Gtk::Orientation::VERTICAL, 5)
   , m_box_gpu(Gtk::Orientation::VERTICAL, 5)
   , m_box_ram(Gtk::Orientation::VERTICAL, 5)
@@ -57,11 +44,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   , m_box_fs(Gtk::Orientation::VERTICAL, 5)
   , m_box_net(Gtk::Orientation::VERTICAL, 5)
 {
-#ifdef HAVE_ROCM_SMI
-  amd_data = amd.calculate_rocm_smi();
-  m_frame_gpu.set_label(amd_data.name);
-#endif
-
   // get ip data
   ipData = netInfo.get_ip_address();
 
@@ -107,6 +89,7 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_frame_cpu.set_hexpand(true);
   m_frame_cpu.set_valign(Gtk::Align::FILL);
   m_frame_cpu.add_css_class("cpu-frame");
+  m_frame_cpu.set_label(cpu.get_cpu_name());
 
   m_dispatcher.connect([this]()
                        {
@@ -122,7 +105,7 @@ SystemMonitorWindow::SystemMonitorWindow()
       }
       else
       {
-        m_progressbar_cpu[i]->set_text("CPU" + std::to_string(i) + " " + two_decimals_format(cpuUsageData[i]) + "%");
+        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpuUsageData[i]) + "%");
       }
     } });
 
@@ -188,106 +171,84 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   update_mem_usage();
 
-#ifdef HAVE_NVML
+#if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
   m_frame_gpu.set_child(m_box_gpu);
   m_frame_gpu.add_css_class("gpu-frame");
-  m_box_gpu.append(m_progressbar_gpu_nvidia_gpuUtil);
-  m_progressbar_gpu_nvidia_gpuUtil.set_margin(5);
-  m_progressbar_gpu_nvidia_gpuUtil.set_halign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_gpuUtil.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_gpuUtil.set_show_text(true);
-  m_progressbar_gpu_nvidia_gpuUtil.set_size_request(300, -1);
-  m_progressbar_gpu_nvidia_gpuUtil.set_vexpand(true);
-  m_progressbar_gpu_nvidia_gpuUtil.set_hexpand(true);
 
-  m_box_gpu.append(m_progressbar_gpu_nvidia_memUtil);
-  m_progressbar_gpu_nvidia_memUtil.set_margin(5);
-  m_progressbar_gpu_nvidia_memUtil.set_halign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_memUtil.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_memUtil.set_show_text(true);
-  m_progressbar_gpu_nvidia_memUtil.set_size_request(300, -1);
-  m_progressbar_gpu_nvidia_memUtil.set_vexpand(true);
-  m_progressbar_gpu_nvidia_memUtil.set_hexpand(true);
+  gpu_data = gpu.get_gpu_data();
+  size_t gpu_count = gpu_data.size();
 
-  m_box_gpu.append(m_progressbar_gpu_nvidia_usedVram);
-  m_progressbar_gpu_nvidia_usedVram.set_margin(5);
-  m_progressbar_gpu_nvidia_usedVram.set_halign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_usedVram.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_usedVram.set_show_text(true);
-  m_progressbar_gpu_nvidia_usedVram.set_size_request(300, -1);
-  m_progressbar_gpu_nvidia_usedVram.set_vexpand(true);
-  m_progressbar_gpu_nvidia_usedVram.set_hexpand(true);
+  for (const auto &g : gpu_data)
+  {
+    m_frame_gpu.set_label(g.name);
+    auto gpu_util = Gtk::make_managed<Gtk::ProgressBar>();
+    auto mem_util = Gtk::make_managed<Gtk::ProgressBar>();
+    auto tot_vram = Gtk::make_managed<Gtk::ProgressBar>();
+    auto used_vram = Gtk::make_managed<Gtk::ProgressBar>();
+    auto free_vram = Gtk::make_managed<Gtk::ProgressBar>();
 
-  m_box_gpu.append(m_progressbar_gpu_nvidia_freeVram);
-  m_progressbar_gpu_nvidia_freeVram.set_margin(5);
-  m_progressbar_gpu_nvidia_freeVram.set_halign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_freeVram.set_valign(Gtk::Align::CENTER);
-  m_progressbar_gpu_nvidia_freeVram.set_show_text(true);
-  m_progressbar_gpu_nvidia_freeVram.set_size_request(300, -1);
-  m_progressbar_gpu_nvidia_freeVram.set_vexpand(true);
-  m_progressbar_gpu_nvidia_freeVram.set_hexpand(true);
+    gpu_util->set_margin(5);
+    gpu_util->set_halign(Gtk::Align::CENTER);
+    gpu_util->set_valign(Gtk::Align::CENTER);
+    gpu_util->set_show_text(true);
+    gpu_util->set_size_request(300, -1);
+    gpu_util->set_vexpand(true);
+    gpu_util->set_hexpand(true);
+    gpu_util->add_css_class("gpu-util");
 
-  m_progressbar_gpu_nvidia_gpuUtil.add_css_class("gpu-progressbar-nvidia-gpuUtil");
-  m_progressbar_gpu_nvidia_memUtil.add_css_class("gpu-progressbar-nvidia-memUtil");
-  m_progressbar_gpu_nvidia_usedVram.add_css_class("gpu-progressbar-nvidia-usedVram");
-  m_progressbar_gpu_nvidia_freeVram.add_css_class("gpu-progressbar-nvidia-freeVram");
+    mem_util->set_margin(5);
+    mem_util->set_halign(Gtk::Align::CENTER);
+    mem_util->set_valign(Gtk::Align::CENTER);
+    mem_util->set_show_text(true);
+    mem_util->set_size_request(300, -1);
+    mem_util->set_vexpand(true);
+    mem_util->set_hexpand(true);
+    mem_util->add_css_class("mem-util");
 
-  Glib::signal_timeout().connect([this]()
-                                 { return update_nvidia_gpu_usage(); },
-                                 1000);
+    tot_vram->set_margin(5);
+    tot_vram->set_halign(Gtk::Align::CENTER);
+    tot_vram->set_valign(Gtk::Align::CENTER);
+    tot_vram->set_show_text(true);
+    tot_vram->set_size_request(300, -1);
+    tot_vram->set_vexpand(true);
+    tot_vram->set_hexpand(true);
+    tot_vram->add_css_class("tot-vram");
 
-  update_nvidia_gpu_usage();
-#endif
+    used_vram->set_margin(5);
+    used_vram->set_halign(Gtk::Align::CENTER);
+    used_vram->set_valign(Gtk::Align::CENTER);
+    used_vram->set_show_text(true);
+    used_vram->set_size_request(300, -1);
+    used_vram->set_vexpand(true);
+    used_vram->set_hexpand(true);
+    used_vram->add_css_class("used-vram");
 
-#ifdef HAVE_ROCM_SMI
-  m_frame_gpu.set_child(m_box_gpu);
-  m_frame_gpu.add_css_class("gpu-frame");
-  m_box_gpu.append(m_progress_gpu_amd_util);
-  m_progress_gpu_amd_util.set_margin(5);
-  m_progress_gpu_amd_util.set_halign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_util.set_valign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_util.set_show_text(true);
-  m_progress_gpu_amd_util.set_size_request(300, -1);
-  m_progress_gpu_amd_util.set_vexpand(true);
-  m_progress_gpu_amd_util.set_hexpand(true);
+    free_vram->set_margin(5);
+    free_vram->set_halign(Gtk::Align::CENTER);
+    free_vram->set_valign(Gtk::Align::CENTER);
+    free_vram->set_show_text(true);
+    free_vram->set_size_request(300, -1);
+    free_vram->set_vexpand(true);
+    free_vram->set_hexpand(true);
+    free_vram->add_css_class("free-vram");
 
-  m_box_gpu.append(m_progress_gpu_amd_mem_util);
-  m_progress_gpu_amd_mem_util.set_margin(5);
-  m_progress_gpu_amd_mem_util.set_halign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_mem_util.set_valign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_mem_util.set_show_text(true);
-  m_progress_gpu_amd_mem_util.set_size_request(300, -1);
-  m_progress_gpu_amd_mem_util.set_vexpand(true);
-  m_progress_gpu_amd_mem_util.set_hexpand(true);
+    m_box_gpu.append(*gpu_util);
+    m_box_gpu.append(*mem_util);
+    m_box_gpu.append(*tot_vram);
+    m_box_gpu.append(*used_vram);
+    m_box_gpu.append(*free_vram);
 
-  m_box_gpu.append(m_progress_gpu_amd_used_vram);
-  m_progress_gpu_amd_used_vram.set_margin(5);
-  m_progress_gpu_amd_used_vram.set_halign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_used_vram.set_valign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_used_vram.set_show_text(true);
-  m_progress_gpu_amd_used_vram.set_size_request(300, -1);
-  m_progress_gpu_amd_used_vram.set_vexpand(true);
-  m_progress_gpu_amd_used_vram.set_hexpand(true);
-
-  m_box_gpu.append(m_progress_gpu_amd_free_vram);
-  m_progress_gpu_amd_free_vram.set_margin(5);
-  m_progress_gpu_amd_free_vram.set_halign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_free_vram.set_valign(Gtk::Align::CENTER);
-  m_progress_gpu_amd_free_vram.set_show_text(true);
-  m_progress_gpu_amd_free_vram.set_size_request(300, -1);
-  m_progress_gpu_amd_free_vram.set_vexpand(true);
-  m_progress_gpu_amd_free_vram.set_hexpand(true);
-
-  m_progress_gpu_amd_util.add_css_class("gpu-progress-amd-util");
-  m_progress_gpu_amd_mem_util.add_css_class("gpu-progress-amd-mem-util");
-  m_progress_gpu_amd_used_vram.add_css_class("gpu-progress-amd-used-vram");
-  m_progress_gpu_amd_free_vram.add_css_class("gpu-progress-amd-free-vram");
+    m_progressbar_gpu_util.push_back(gpu_util);
+    m_progressbar_gpu_mem_util.push_back(mem_util);
+    m_progressbar_gpu_tot_vram.push_back(tot_vram);
+    m_progressbar_gpu_used_vram.push_back(used_vram);
+    m_progressbar_gpu_free_vram.push_back(free_vram);
+  }
 
   Glib::signal_timeout().connect([this]()
-                                 { return update_amd_gpu_usage(); },
+                                 { return update_gpu(); },
                                  1000);
-
-  update_amd_gpu_usage();
+  update_gpu();
 #endif
 
   m_frame_net.set_child(m_box_net);
@@ -357,7 +318,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_VBox.append(m_ram_fs_box);
 
   // key event / change boxes you see
-
   key_controller = Gtk::EventControllerKey::create();
 
   key_controller->signal_key_pressed().connect(
@@ -387,7 +347,6 @@ SystemMonitorWindow::SystemMonitorWindow()
   add_controller(key_controller);
 
   // css
-
   m_ref_css_provider = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
   Gtk::StyleProvider::add_provider_for_display(get_display(), m_ref_css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -452,8 +411,6 @@ bool SystemMonitorWindow::update_mem_usage()
 {
   MemData data = memInfo.get_mem_data();
 
-  // TODO display less decimales
-
   // convert from kb to gb
   double totGIB = data.memTotal / 1024.0 / 1024.0;
   double freeGIB = data.memFree / 1024.0 / 1024.0;
@@ -464,8 +421,6 @@ bool SystemMonitorWindow::update_mem_usage()
   double percentageUsed = usedGIB / totGIB;
   double percentageAvailable = availableGIB / totGIB;
   double percentageFree = freeGIB / totGIB;
-
-  // float x = std::floor(totGIB * 100.0) / 100.0f;
 
   m_progressbar_mem_tot.set_text("Total memory: " + two_decimals_format(totGIB) + " GIB");
   m_progressbar_mem_used.set_text("Memory used: " + two_decimals_format(usedGIB) + " GIB");
@@ -480,65 +435,38 @@ bool SystemMonitorWindow::update_mem_usage()
   return true;
 }
 
-#ifdef HAVE_NVML
-bool SystemMonitorWindow::update_nvidia_gpu_usage()
+#if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
+bool SystemMonitorWindow::update_gpu()
 {
-  NvidiaData data = nvidia.calculate_nvml();
+  auto data = gpu.get_gpu_data();
 
-  m_progressbar_gpu_nvidia_gpuUtil.set_text("GPU util: " + two_decimals_format(data.gpuUtil) + " %");
-  m_progressbar_gpu_nvidia_memUtil.set_text("MEM util: " + two_decimals_format(data.memUtil) + " %");
-  // m_progressbar_gpu_nvidia_totVram.set_text("Total Vram: " + std::to_string(data.totVram) + " %");
-
-  m_progressbar_gpu_nvidia_gpuUtil.set_fraction(data.gpuUtil / 100);
-  m_progressbar_gpu_nvidia_memUtil.set_fraction(data.memUtil / 100);
-  // m_progressbar_gpu_nvidia_totVram.set_fraction(data.totVram / 100);
-
-  // avoid division by 0
-  if (data.totVram > 0)
+  for (size_t i = 0; i < data.size() && i < m_progressbar_gpu_util.size(); i++)
   {
-    double usedFraction = data.usedVram / data.totVram;
-    double freeFraction = (data.totVram - data.usedVram) / data.totVram;
-    m_progressbar_gpu_nvidia_usedVram.set_fraction(usedFraction);
-    m_progressbar_gpu_nvidia_freeVram.set_fraction(freeFraction);
+    const auto &g = data[i];
 
-    m_progressbar_gpu_nvidia_usedVram.set_text("Used Vram: " + two_decimals_format(data.usedVram) + " GIB" + " / " + two_decimals_format(data.totVram) + " GIB");
-    m_progressbar_gpu_nvidia_freeVram.set_text("Free Vram: " + two_decimals_format(data.totVram - data.usedVram) + " GIB" + " / " + two_decimals_format(data.totVram) + " GIB");
-  }
-  else
-  {
-    m_progressbar_gpu_nvidia_usedVram.set_fraction(0.0);
-    m_progressbar_gpu_nvidia_freeVram.set_fraction(0.0);
-  }
+    m_progressbar_gpu_util[i]->set_fraction(g.gpu_util / 100.0);
+    m_progressbar_gpu_util[i]->set_text("GPU Util: " + two_decimals_format(g.gpu_util) + "%");
 
-  return true;
-}
-#endif
+    m_progressbar_gpu_mem_util[i]->set_fraction(g.mem_util / 100.0);
+    m_progressbar_gpu_mem_util[i]->set_text("MEM util: " + two_decimals_format(g.mem_util) + "%");
 
-#ifdef HAVE_ROCM_SMI
-bool SystemMonitorWindow::update_amd_gpu_usage()
-{
-  amd_data = amd.calculate_rocm_smi();
+    if (g.tot_vram > 0)
+    {
+      m_progressbar_gpu_tot_vram[i]->set_fraction(g.tot_vram / 100.0);
+      m_progressbar_gpu_tot_vram[i]->set_text("Tot Vram: " + two_decimals_format(g.tot_vram) + " GIB");
 
-  m_progress_gpu_amd_util.set_text("GPU util: " + two_decimals_format(amd_data.gpu_util) + " %");
-  m_progress_gpu_amd_mem_util.set_text("MEM util: " + two_decimals_format(amd_data.mem_util));
+      m_progressbar_gpu_used_vram[i]->set_fraction(g.used_vram / 100.0);
+      m_progressbar_gpu_used_vram[i]->set_text("Used Vram: " + two_decimals_format(g.used_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
 
-  m_progress_gpu_amd_util.set_fraction(amd_data.gpu_util / 100);
-  m_progress_gpu_amd_mem_util.set_fraction(amd_data.mem_util / 100);
-
-  if (amd_data.tot_vram > 0)
-  {
-    double used_fraction = amd_data.used_vram / amd_data.tot_vram;
-    double free_fraction = (amd_data.tot_vram - amd_data.used_vram) / amd_data.tot_vram;
-    m_progress_gpu_amd_used_vram.set_fraction(used_fraction);
-    m_progress_gpu_amd_free_vram.set_fraction(free_fraction);
-
-    m_progress_gpu_amd_used_vram.set_text("Used vram: " + two_decimals_format(amd_data.used_vram) + " GIB" + " / " + two_decimals_format(amd_data.tot_vram) + " GIB");
-    m_progress_gpu_amd_free_vram.set_text("Free vram: " + two_decimals_format(amd_data.tot_vram - amd_data.used_vram) + " GIB" + " / " + two_decimals_format(amd_data.tot_vram) + " GIB");
-  }
-  else
-  {
-    m_progress_gpu_amd_used_vram.set_fraction(0.0);
-    m_progress_gpu_amd_free_vram.set_fraction(0.0);
+      m_progressbar_gpu_free_vram[i]->set_text("Free Vram: " + two_decimals_format(g.free_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
+      m_progressbar_gpu_free_vram[i]->set_fraction(g.free_vram / 100.0);
+    }
+    else
+    {
+      m_progressbar_gpu_tot_vram[i]->set_fraction(0.0);
+      m_progressbar_gpu_used_vram[i]->set_fraction(0.0);
+      m_progressbar_gpu_free_vram[i]->set_fraction(0.0);
+    }
   }
   return true;
 }
