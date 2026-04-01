@@ -45,7 +45,7 @@ SystemMonitorWindow::SystemMonitorWindow()
   , m_box_net(Gtk::Orientation::VERTICAL, 5)
 {
   // get ip data
-  ipData = netInfo.get_ip_address();
+  ip_data_ = net_info_.get_ip_address();
 
   // set title for the window
   set_title("System Monitor");
@@ -58,8 +58,8 @@ SystemMonitorWindow::SystemMonitorWindow()
   set_child(m_HBox);
   m_HBox.append(m_VBox);
 
-  prev = cpu.get_cpu_tread_data();
-  size_t cpu_count = prev.size();
+  prev_ = cpu_.get_cpu_tread_data();
+  size_t cpu_count = prev_.size();
 
   m_grid_cpu.set_column_homogeneous(true);
   m_grid_cpu.set_column_spacing(6);
@@ -89,23 +89,23 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_frame_cpu.set_hexpand(true);
   m_frame_cpu.set_valign(Gtk::Align::FILL);
   m_frame_cpu.add_css_class("cpu-frame");
-  m_frame_cpu.set_label(cpu.get_cpu_name());
+  m_frame_cpu.set_label(cpu_.get_cpu_name());
 
   m_dispatcher.connect([this]()
                        {
-    for (size_t i = 0; i < cpu_usage_data.size() && i < m_progressbar_cpu.size(); i++)
+    for (size_t i = 0; i < cpu_usage_data_.size() && i < m_progressbar_cpu.size(); i++)
     {
-      double usageFraction = cpu_usage_data[i] / 100.0;
+      double usageFraction = cpu_usage_data_[i] / 100.0;
       m_progressbar_cpu[i]->set_fraction(usageFraction);
       m_progressbar_cpu[i]->add_css_class("cpu-progress-bar");
 
       if (i == 0)
       {
-        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpu_usage_data[0]) + "%");
+        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpu_usage_data_[0]) + "%");
       }
       else
       {
-        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpu_usage_data[i]) + "%");
+        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpu_usage_data_[i]) + "%");
       }
     } });
 
@@ -252,7 +252,7 @@ SystemMonitorWindow::SystemMonitorWindow()
 #endif
 
   m_frame_net.set_child(m_box_net);
-  m_frame_net.set_label(ipData.name + " " + ipData.addr);
+  m_frame_net.set_label(ip_data_.name + " " + ip_data_.addr);
   m_box_net.append(m_progressbar_net_rx);
   m_progressbar_net_rx.set_margin(5);
   m_progressbar_net_rx.set_halign(Gtk::Align::CENTER);
@@ -368,15 +368,15 @@ bool SystemMonitorWindow::update_cpu_progress_bar()
 {
   std::thread([this]()
               {
-                prev = cpu.get_cpu_tread_data();
+                prev_ = cpu_.get_cpu_tread_data();
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                curr = cpu.get_cpu_tread_data();
-                std::vector<CpuPercentage> cpuUsage = cpu.calculate_cpu_thread_usage(curr, prev);
+                curr_ = cpu_.get_cpu_tread_data();
+                std::vector<CpuPercentage> cpuUsage = cpu_.calculate_cpu_thread_usage(curr_, prev_);
 
-                cpu_usage_data.clear();
+                cpu_usage_data_.clear();
                 for (const auto &usage : cpuUsage)
                 {
-                  cpu_usage_data.push_back(usage.percentage_used);
+                  cpu_usage_data_.push_back(usage.percentage_used);
                 }
 
                 m_dispatcher.emit(); })
@@ -481,8 +481,8 @@ std::string SystemMonitorWindow::two_decimals_format(double value)
 
 bool SystemMonitorWindow::update_net_usage()
 {
-  static auto prev = netInfo.get_network_stats();
-  auto        curr = netInfo.get_network_stats();
+  static auto prev = net_info_.get_network_stats();
+  auto        curr = net_info_.get_network_stats();
 
   for (const auto &curr_stat : curr)
   {

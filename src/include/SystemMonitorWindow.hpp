@@ -57,14 +57,14 @@ private:
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection> &section, const Glib::Error &error);
 
   // CPU
-  CpuUsage             cpu;
-  std::vector<CpuData> prev;
-  std::vector<CpuData> curr;
+  CpuUsage             cpu_;
+  std::vector<CpuData> prev_;
+  std::vector<CpuData> curr_;
 
   bool update_cpu_progress_bar();
 
   Glib::Dispatcher    m_dispatcher;
-  std::vector<double> cpu_usage_data;
+  std::vector<double> cpu_usage_data_;
 
   Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
 
@@ -80,8 +80,8 @@ private:
 #endif
 
   // net
-  NetInfo netInfo;
-  IpData  ipData;
+  NetInfo net_info_;
+  IpData  ip_data_;
   bool    update_net_usage();
 
   // disks / file-system
