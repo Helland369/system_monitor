@@ -74,8 +74,8 @@ private:
   bool update_mem_usage();
 
 #if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
-  GpuInfo   gpu;
-  std::vector<GpuData> gpu_data;
+  GpuInfo   gpu_;
+  std::vector<GpuData> gpu_data_;
   bool      update_gpu();
 #endif
 

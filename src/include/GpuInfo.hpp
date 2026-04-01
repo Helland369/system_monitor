@@ -29,7 +29,7 @@ private:
   void                 check_nvml(nvmlReturn_t status, const std::string &msg);
   std::vector<GpuData> calculate_nvidia_data();
 #endif
-  uint32_t num_devices{0};
+  uint32_t num_devices_{0};
 
 public:
   GpuInfo();

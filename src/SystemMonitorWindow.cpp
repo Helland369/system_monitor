@@ -175,10 +175,10 @@ SystemMonitorWindow::SystemMonitorWindow()
   m_frame_gpu.set_child(m_box_gpu);
   m_frame_gpu.add_css_class("gpu-frame");
 
-  gpu_data = gpu.get_gpu_data();
-  size_t gpu_count = gpu_data.size();
+  gpu_data_ = gpu_.get_gpu_data();
+  size_t gpu_count = gpu_data_.size();
 
-  for (const auto &g : gpu_data)
+  for (const auto &g : gpu_data_)
   {
     m_frame_gpu.set_label(g.name);
     auto gpu_util = Gtk::make_managed<Gtk::ProgressBar>();
@@ -438,7 +438,7 @@ bool SystemMonitorWindow::update_mem_usage()
 #if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
 bool SystemMonitorWindow::update_gpu()
 {
-  auto data = gpu.get_gpu_data();
+  auto data = gpu_.get_gpu_data();
 
   for (size_t i = 0; i < data.size() && i < m_progressbar_gpu_util.size(); i++)
   {

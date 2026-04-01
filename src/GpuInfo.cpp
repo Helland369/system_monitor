@@ -40,10 +40,10 @@ void GpuInfo::check_rsmi(rsmi_status_t status, const std::string &msg)
 std::vector<GpuData> GpuInfo::calculate_amd_data()
 {
   std::vector<GpuData> data_vec;
-  auto status = rsmi_num_monitor_devices(&num_devices);
+  auto status = rsmi_num_monitor_devices(&num_devices_);
   check_rsmi(status, "rsmi_num_monitor_devices");
 
-  for (uint32_t i = 0; i < num_devices; i++)
+  for (uint32_t i = 0; i < num_devices_; i++)
   {
     GpuData data{};
     char    name[256];
@@ -88,10 +88,10 @@ std::vector<GpuData> GpuInfo::calculate_nvidia_data()
 {
   std::vector<GpuData> data_vec;
   nvmlDevice_t         device;
-  auto status = nvmlDeviceGetCount(&num_devices);
+  auto status = nvmlDeviceGetCount(&num_devices_);
   check_nvml(status, "nvmlDeviceGetCount");
 
-  for (uint32_t i = 0; i < num_devices; i++)
+  for (uint32_t i = 0; i < num_devices_; i++)
   {
     GpuData data{};
     status = nvmlDeviceGetHandleByIndex(i, &device);
