@@ -33,15 +33,15 @@ MemData MemInfo::get_mem_data()
 
         if (name == "MemTotal:")
         {
-          data.memTotal = value;
+          data.mem_total = value;
         }
         else if (name == "MemFree:")
         {
-          data.memFree = value;
+          data.mem_free = value;
         }
         else if (name == "MemAvailable:")
         {
-          data.memAvailable = value;
+          data.mem_available = value;
         }
       }
     }

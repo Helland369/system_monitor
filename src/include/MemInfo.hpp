@@ -5,7 +5,7 @@
 class MemData
 {
 public:
-  std::uint64_t memTotal, memFree, memAvailable;
+  std::uint64_t mem_total, mem_free, mem_available;
 };
 
 class MemInfo

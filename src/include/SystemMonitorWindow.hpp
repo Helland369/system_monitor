@@ -69,7 +69,7 @@ private:
   Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
 
   // mem
-  MemInfo memInfo;
+  MemInfo mem_info_;
 
   bool update_mem_usage();
 

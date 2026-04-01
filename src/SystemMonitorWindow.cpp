@@ -409,12 +409,12 @@ void SystemMonitorWindow::on_parsing_error(const Glib::RefPtr<const Gtk::CssSect
 
 bool SystemMonitorWindow::update_mem_usage()
 {
-  MemData data = memInfo.get_mem_data();
+  MemData data = mem_info_.get_mem_data();
 
   // convert from kb to gb
-  double totGIB = data.memTotal / 1024.0 / 1024.0;
-  double freeGIB = data.memFree / 1024.0 / 1024.0;
-  double availableGIB = data.memAvailable / 1024.0 / 1024.0;
+  double totGIB = data.mem_total / 1024.0 / 1024.0;
+  double freeGIB = data.mem_free / 1024.0 / 1024.0;
+  double availableGIB = data.mem_available / 1024.0 / 1024.0;
   double usedGIB = totGIB - availableGIB;
 
   // calculate percentage
