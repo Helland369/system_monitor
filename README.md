@@ -11,20 +11,21 @@
   - [How it works](#How-it-works)
   - [Code structure](#Code-structure)
   - [Running the program](#Running-the-program)
-  - [Testing](#Testing) 
+  - [Keybindings](#Keybindings)
+  - [Testing](#Testing)
   - [Known Limitations](#Known-Limitations)
 
 # About
 
-A simple system monitor for Linux, using gtk4/gtkmm-4.0 and written in C++.
+A simple system monitor for Linux, using gtkmm-4.0 and written in C++.
 This project was created as part of a school assignment to learn system-level programming in C++ and explore GUI development in gtk.
 
 This program displays real-time usages statistics for the CPU, GPU, memory, hard drives and internet (upload/download).
-The program gets system information from the Linux `/proc` pseudo-filesystem and uses the Nvidia API to retrieve the GPU stats.
+The program gets system information from the Linux `/proc` pseudo-file-system and uses the Nvidia and/or AMD API to retrieve the GPU stats.
 
 # Image
 
-![system_monitor](https://github.com/Helland369/system_monitor/blob/main/img/2025-04-07_11-01.png)
+![system_monitor](https://github.com/Helland369/system_monitor/blob/main/img/2026-04-01_17-30.png)
 
 # Installation
 
@@ -36,7 +37,7 @@ The program gets system information from the Linux `/proc` pseudo-filesystem and
  - [ninja](https://ninja-build.org/)
  - [gcc/g++](https://gcc.gnu.org/)
 
-### You can also use your favorite package manager
+You can also use your favorite package manager to install the dependencies.
 
 On Arch you would use pacman:
 
@@ -52,28 +53,28 @@ Clone the repository:
 git clone https://github.com/Helland369/system_monitor.git
 ```
 
-cd to project
+Cd to project:
 
 ```
 cd system_monitor
 ```
 
-cmake command
+Make the build script executable:
 
 ```
-cmake --fresh -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+chmod +x build.sh
 ```
 
-cd to build
+Run the script:
 
 ```
-cd build
+./build.sh
 ```
 
 run the program
 
 ```
-./system_monitor
+./build/system_monitor
 ```
 
 ## Binary
@@ -85,7 +86,7 @@ You can get a binary [here](https://github.com/Helland369/system_monitor/release
 
 ## Overview
 
-This system monitor gathers system statistics by reading files from the `/proc` pseudo-filesystem and accessing the NVIDIA API for GPU stats. It uses GTK4 and gtkmm-4.0 to build a modern, native Linux GUI.
+This system monitor gathers system statistics by reading files from the `/proc` pseudo-filesystem and accessing the NVIDIA and/or AMD API for GPU stats. It uses  gtkmm-4.0 to build a modern, native Linux GUI.
 
 + While running the program, you can press `1` through `5` to change the layout of the boxes.
 
@@ -96,21 +97,21 @@ This system monitor gathers system statistics by reading files from the `/proc` 
   Retrieved from `/proc/stat`, `/proc/meminfo`, and other related files.
 
 - **Disk Usage:**
-  
+
   Read from `/proc/diskstats`.
 
 - **Network Usage:**
 
   Calculated Using `/proc/net/dev`, tracking changes in RX/TX byte counts over time.
-  
+
 - **GPU Usage:**
 
-  Fetched via the NVIDIA Management Library (NVML).
-  
+  Fetched via the Nvidia and/or AMD API. Depending on what GPU you have in your computer, the appropriate API (AMD or Nvidia or both) will be selected when building the program.
+
 - **GUI:**
 
   Built with GTK4 widgets using the gtkmm C++ bindings, updated in real time using timers.
-  
+
 ## Code structure
 
 - `/src/main.cpp` Main entry point of the program.
@@ -125,8 +126,8 @@ This system monitor gathers system statistics by reading files from the `/proc` 
 
 - `src/NetInfo.cpp` Logic for gathering Network info.
 
-- `src/NvidiaInfo.cpp` Logic for talking to the Nvidia api (NVML).
-  
+- `src/GpuInfo.cpp` Logic for talking to the Nvidia and/or AMD API.
+
 ## Running the program
 
 After building the project, you can run the binary from the `build/` folder:
@@ -135,14 +136,27 @@ After building the project, you can run the binary from the `build/` folder:
 ./system_monitor
 ```
 
+## Keybindings
+
+| Key to press | Action                      |
+| 1            | Toggle on/off CPU  usage    |
+| 2            | Toggle on/off Memory usage  |
+| 3            | Toggle on/off GPU usage     |
+| 4            | Toggle on/off Disk usage    |
+| 5            | Toggle on/off Network usage |
+
+
 ## Testing
 
-Tested on Arch Linux in I3 and X11
+Tested on Arch Linux in I3 and X11.
+Tested on Arch Linux in SWAY/Wayland.
 
 ## Known Limitations
 
-- GPU monitoring only works with Nvidia GPUs via NVML.
+- GPU monitoring only works with Nvidia GPUs via NVML and AMD GPUs via rocm_smi.h.
 
 - The program only supports Linux.
 
-- GTK themes don't work.
+- GTK themes maybe works.
+
+- UI may brake if you have multiple GPUs installed in you computer.
