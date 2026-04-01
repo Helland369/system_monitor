@@ -139,6 +139,7 @@ After building the project, you can run the binary from the `build/` folder:
 ## Keybindings
 
 | Key to press | Action                      |
+|--------------|-----------------------------|
 | 1            | Toggle on/off CPU  usage    |
 | 2            | Toggle on/off Memory usage  |
 | 3            | Toggle on/off GPU usage     |
