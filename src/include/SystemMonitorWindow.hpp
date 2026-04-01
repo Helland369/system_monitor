@@ -64,7 +64,7 @@ private:
   bool update_cpu_progress_bar();
 
   Glib::Dispatcher    m_dispatcher;
-  std::vector<double> cpuUsageData;
+  std::vector<double> cpu_usage_data;
 
   Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
 

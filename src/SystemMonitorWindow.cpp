@@ -93,19 +93,19 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   m_dispatcher.connect([this]()
                        {
-    for (size_t i = 0; i < cpuUsageData.size() && i < m_progressbar_cpu.size(); i++)
+    for (size_t i = 0; i < cpu_usage_data.size() && i < m_progressbar_cpu.size(); i++)
     {
-      double usageFraction = cpuUsageData[i] / 100.0;
+      double usageFraction = cpu_usage_data[i] / 100.0;
       m_progressbar_cpu[i]->set_fraction(usageFraction);
       m_progressbar_cpu[i]->add_css_class("cpu-progress-bar");
 
       if (i == 0)
       {
-        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpuUsageData[0]) + "%");
+        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpu_usage_data[0]) + "%");
       }
       else
       {
-        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpuUsageData[i]) + "%");
+        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpu_usage_data[i]) + "%");
       }
     } });
 
@@ -373,10 +373,10 @@ bool SystemMonitorWindow::update_cpu_progress_bar()
                 curr = cpu.get_cpu_tread_data();
                 std::vector<CpuPercentage> cpuUsage = cpu.calculate_cpu_thread_usage(curr, prev);
 
-                cpuUsageData.clear();
+                cpu_usage_data.clear();
                 for (const auto &usage : cpuUsage)
                 {
-                  cpuUsageData.push_back(usage.percentageUsed);
+                  cpu_usage_data.push_back(usage.percentage_used);
                 }
 
                 m_dispatcher.emit(); })

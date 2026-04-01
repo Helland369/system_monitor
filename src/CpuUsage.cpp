@@ -64,8 +64,7 @@ std::vector<CpuPercentage> CpuUsage::calculate_cpu_thread_usage(std::vector<CpuD
     double totalDelta = currTot - prevTot;
     double idleDelta = currIdle - prevIdle;
 
-    // TODO S = C
-    percentage.percentageUsed = (1.0 - (idleDelta / totalDelta)) * 100.0;
+    percentage.percentage_used = (1.0 - (idleDelta / totalDelta)) * 100.0;
 
     percentages.push_back(percentage);
   }
