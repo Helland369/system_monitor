@@ -32,26 +32,26 @@ public:
 class SystemMonitorWindow : public Gtk::Window
 {
 private:
-  Gtk::Box         m_HBox;
-  Gtk::Box         m_VBox;
-  Gtk::Grid        m_grid_cpu;
-  Gtk::Box         m_box_cpu, m_box_gpu, m_box_ram, m_box_net, m_box_fs, m_ram_fs_box, m_gpu_net_box;
-  Gtk::Frame       m_frame_cpu, m_frame_gpu, m_frame_ram, m_frame_net, m_frame_fs;
-  Gtk::ProgressBar m_progressbar_gpu_nvidia_gpuUtil,
-    m_progressbar_mem_tot, m_progressbar_mem_used,
-    m_progressbar_mem_available, m_progressbar_mem_free, m_progressbar_net_rx,
-    m_progressbar_net_tx;
+  Gtk::Box         HBox_;
+  Gtk::Box         VBox_;
+  Gtk::Grid        grid_cpu_;
+  Gtk::Box         box_cpu_, box_gpu_, box_ram_, box_net_, box_fs_, ram_fs_box_, gpu_net_box_;
+  Gtk::Frame       frame_cpu_, frame_gpu_, frame_ram_, frame_net_, frame_fs_;
+  Gtk::ProgressBar progressbar_gpu_nvidia_gpuUtil_,
+    progressbar_mem_tot_, progressbar_mem_used_,
+    progressbar_mem_available_, progressbar_mem_free_, progressbar_net_rx_,
+    progressbar_net_tx_;
 
-  std::vector<Gtk::ProgressBar *> m_progressbar_cpu,
-    m_progressbar_gpu_util,
-    m_progressbar_gpu_mem_util,
-    m_progressbar_gpu_tot_vram,
-    m_progressbar_gpu_used_vram,
-    m_progressbar_gpu_free_vram;
-  std::vector<DiskUsage> m_progressbar_fs;
+  std::vector<Gtk::ProgressBar *> progressbar_cpu_,
+    progressbar_gpu_util_,
+    progressbar_gpu_mem_util_,
+    progressbar_gpu_tot_vram_,
+    progressbar_gpu_used_vram_,
+    progressbar_gpu_free_vram_;
+  std::vector<DiskUsage> progressbar_fs_;
 
   // key events
-  Glib::RefPtr<Gtk::EventControllerKey> key_controller;
+  Glib::RefPtr<Gtk::EventControllerKey> key_controller_;
 
   // css
   static void on_parsing_error(const Glib::RefPtr<const Gtk::CssSection> &section, const Glib::Error &error);
@@ -66,7 +66,7 @@ private:
   Glib::Dispatcher    m_dispatcher;
   std::vector<double> cpu_usage_data_;
 
-  Glib::RefPtr<Gtk::CssProvider> m_ref_css_provider;
+  Glib::RefPtr<Gtk::CssProvider> ref_css_provider_;
 
   // mem
   MemInfo mem_info_;

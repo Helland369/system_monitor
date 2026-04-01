@@ -32,17 +32,17 @@
 #include <utility>
 
 SystemMonitorWindow::SystemMonitorWindow()
-  : m_VBox(Gtk::Orientation::VERTICAL, 5)
-  , m_HBox(Gtk::Orientation::HORIZONTAL, 5)
-  , m_frame_cpu("CPU")
-  , m_frame_ram("mem")
-  , m_frame_fs("disks")
-  , m_box_cpu(Gtk::Orientation::VERTICAL, 5)
-  , m_box_gpu(Gtk::Orientation::VERTICAL, 5)
-  , m_box_ram(Gtk::Orientation::VERTICAL, 5)
-  , m_ram_fs_box(Gtk::Orientation::HORIZONTAL, 5)
-  , m_box_fs(Gtk::Orientation::VERTICAL, 5)
-  , m_box_net(Gtk::Orientation::VERTICAL, 5)
+  : VBox_(Gtk::Orientation::VERTICAL, 5)
+  , HBox_(Gtk::Orientation::HORIZONTAL, 5)
+  , frame_cpu_("CPU")
+  , frame_ram_("mem")
+  , frame_fs_("disks")
+  , box_cpu_(Gtk::Orientation::VERTICAL, 5)
+  , box_gpu_(Gtk::Orientation::VERTICAL, 5)
+  , box_ram_(Gtk::Orientation::VERTICAL, 5)
+  , ram_fs_box_(Gtk::Orientation::HORIZONTAL, 5)
+  , box_fs_(Gtk::Orientation::VERTICAL, 5)
+  , box_net_(Gtk::Orientation::VERTICAL, 5)
 {
   // get ip data
   ip_data_ = net_info_.get_ip_address();
@@ -54,21 +54,21 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   add_css_class("main-window");
 
-  m_HBox.set_margin(5);
-  set_child(m_HBox);
-  m_HBox.append(m_VBox);
+  HBox_.set_margin(5);
+  set_child(HBox_);
+  HBox_.append(VBox_);
 
   prev_ = cpu_.get_cpu_tread_data();
   size_t cpu_count = prev_.size();
 
-  m_grid_cpu.set_column_homogeneous(true);
-  m_grid_cpu.set_column_spacing(6);
-  m_grid_cpu.set_row_spacing(10);
+  grid_cpu_.set_column_homogeneous(true);
+  grid_cpu_.set_column_spacing(6);
+  grid_cpu_.set_row_spacing(10);
 
   for (size_t i = 0; i < cpu_count; i++)
   {
     auto prog_bar = Gtk::make_managed<Gtk::ProgressBar>();
-    m_progressbar_cpu.push_back(prog_bar);
+    progressbar_cpu_.push_back(prog_bar);
 
     prog_bar->set_margin(5);
     prog_bar->set_halign(Gtk::Align::CENTER);
@@ -82,38 +82,38 @@ SystemMonitorWindow::SystemMonitorWindow()
 
     int col = i % 3;
     int row = i / 3;
-    m_grid_cpu.attach(*prog_bar, col, row);
+    grid_cpu_.attach(*prog_bar, col, row);
   }
 
-  m_frame_cpu.set_child(m_grid_cpu);
-  m_frame_cpu.set_hexpand(true);
-  m_frame_cpu.set_valign(Gtk::Align::FILL);
-  m_frame_cpu.add_css_class("cpu-frame");
-  m_frame_cpu.set_label(cpu_.get_cpu_name());
+  frame_cpu_.set_child(grid_cpu_);
+  frame_cpu_.set_hexpand(true);
+  frame_cpu_.set_valign(Gtk::Align::FILL);
+  frame_cpu_.add_css_class("cpu-frame");
+  frame_cpu_.set_label(cpu_.get_cpu_name());
 
   m_dispatcher.connect([this]()
                        {
-    for (size_t i = 0; i < cpu_usage_data_.size() && i < m_progressbar_cpu.size(); i++)
+    for (size_t i = 0; i < cpu_usage_data_.size() && i < progressbar_cpu_.size(); i++)
     {
       double usageFraction = cpu_usage_data_[i] / 100.0;
-      m_progressbar_cpu[i]->set_fraction(usageFraction);
-      m_progressbar_cpu[i]->add_css_class("cpu-progress-bar");
+      progressbar_cpu_[i]->set_fraction(usageFraction);
+      progressbar_cpu_[i]->add_css_class("cpu-progress-bar");
 
       if (i == 0)
       {
-        m_progressbar_cpu[0]->set_text("Total CPU " + two_decimals_format(cpu_usage_data_[0]) + "%");
+        progressbar_cpu_[0]->set_text("Total CPU " + two_decimals_format(cpu_usage_data_[0]) + "%");
       }
       else
       {
-        m_progressbar_cpu[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpu_usage_data_[i]) + "%");
+        progressbar_cpu_[i]->set_text("CPU " + std::to_string(i) + " " + two_decimals_format(cpu_usage_data_[i]) + "%");
       }
     } });
 
   // allow cpu frame to expand
-  m_frame_cpu.set_hexpand(true);
-  m_frame_cpu.set_valign(Gtk::Align::FILL);
+  frame_cpu_.set_hexpand(true);
+  frame_cpu_.set_valign(Gtk::Align::FILL);
   // set cpu css class
-  m_frame_cpu.add_css_class("cpu-frame");
+  frame_cpu_.add_css_class("cpu-frame");
 
   // update cpu progress bar
   Glib::signal_timeout().connect([this]()
@@ -122,48 +122,48 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   update_cpu_progress_bar();
 
-  m_frame_ram.set_child(m_box_ram);
-  m_frame_ram.add_css_class("ram-frame");
-  m_box_ram.append(m_progressbar_mem_tot);
-  m_progressbar_mem_tot.set_margin(5);
-  m_progressbar_mem_tot.set_halign(Gtk::Align::CENTER);
-  m_progressbar_mem_tot.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_tot.set_show_text(true);
-  m_progressbar_mem_tot.set_size_request(300, -1);
-  m_progressbar_mem_tot.set_vexpand(true);
-  m_progressbar_mem_tot.set_hexpand(true);
+  frame_ram_.set_child(box_ram_);
+  frame_ram_.add_css_class("ram-frame");
+  box_ram_.append(progressbar_mem_tot_);
+  progressbar_mem_tot_.set_margin(5);
+  progressbar_mem_tot_.set_halign(Gtk::Align::CENTER);
+  progressbar_mem_tot_.set_valign(Gtk::Align::CENTER);
+  progressbar_mem_tot_.set_show_text(true);
+  progressbar_mem_tot_.set_size_request(300, -1);
+  progressbar_mem_tot_.set_vexpand(true);
+  progressbar_mem_tot_.set_hexpand(true);
 
-  m_box_ram.append(m_progressbar_mem_used);
-  m_progressbar_mem_used.set_margin(5);
-  m_progressbar_mem_used.set_halign(Gtk::Align::CENTER);
-  m_progressbar_mem_used.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_used.set_size_request(300, -1);
-  m_progressbar_mem_used.set_show_text(true);
-  m_progressbar_mem_used.set_vexpand(true);
-  m_progressbar_mem_used.set_hexpand(true);
+  box_ram_.append(progressbar_mem_used_);
+  progressbar_mem_used_.set_margin(5);
+  progressbar_mem_used_.set_halign(Gtk::Align::CENTER);
+  progressbar_mem_used_.set_valign(Gtk::Align::CENTER);
+  progressbar_mem_used_.set_size_request(300, -1);
+  progressbar_mem_used_.set_show_text(true);
+  progressbar_mem_used_.set_vexpand(true);
+  progressbar_mem_used_.set_hexpand(true);
 
-  m_box_ram.append(m_progressbar_mem_available);
-  m_progressbar_mem_available.set_margin(5);
-  m_progressbar_mem_available.set_halign(Gtk::Align::CENTER);
-  m_progressbar_mem_available.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_available.set_show_text(true);
-  m_progressbar_mem_available.set_size_request(300, -1);
-  m_progressbar_mem_available.set_vexpand(true);
-  m_progressbar_mem_available.set_hexpand(true);
+  box_ram_.append(progressbar_mem_available_);
+  progressbar_mem_available_.set_margin(5);
+  progressbar_mem_available_.set_halign(Gtk::Align::CENTER);
+  progressbar_mem_available_.set_valign(Gtk::Align::CENTER);
+  progressbar_mem_available_.set_show_text(true);
+  progressbar_mem_available_.set_size_request(300, -1);
+  progressbar_mem_available_.set_vexpand(true);
+  progressbar_mem_available_.set_hexpand(true);
 
-  m_box_ram.append(m_progressbar_mem_free);
-  m_progressbar_mem_free.set_margin(5);
-  m_progressbar_mem_free.set_halign(Gtk::Align::CENTER);
-  m_progressbar_mem_free.set_valign(Gtk::Align::CENTER);
-  m_progressbar_mem_free.set_show_text(true);
-  m_progressbar_mem_free.set_size_request(300, -1);
-  m_progressbar_mem_free.set_vexpand(true);
-  m_progressbar_mem_free.set_hexpand(true);
+  box_ram_.append(progressbar_mem_free_);
+  progressbar_mem_free_.set_margin(5);
+  progressbar_mem_free_.set_halign(Gtk::Align::CENTER);
+  progressbar_mem_free_.set_valign(Gtk::Align::CENTER);
+  progressbar_mem_free_.set_show_text(true);
+  progressbar_mem_free_.set_size_request(300, -1);
+  progressbar_mem_free_.set_vexpand(true);
+  progressbar_mem_free_.set_hexpand(true);
 
-  m_progressbar_mem_tot.add_css_class("mem-progressbar-tot");
-  m_progressbar_mem_used.add_css_class("mem-progressbar-used");
-  m_progressbar_mem_available.add_css_class("mem-progressbar-available");
-  m_progressbar_mem_free.add_css_class("mem-progressbar-free");
+  progressbar_mem_tot_.add_css_class("mem-progressbar-tot");
+  progressbar_mem_used_.add_css_class("mem-progressbar-used");
+  progressbar_mem_available_.add_css_class("mem-progressbar-available");
+  progressbar_mem_free_.add_css_class("mem-progressbar-free");
 
   Glib::signal_timeout().connect([this]()
                                  { return update_mem_usage(); },
@@ -172,15 +172,15 @@ SystemMonitorWindow::SystemMonitorWindow()
   update_mem_usage();
 
 #if HAVE_NVML || HAVE_ROCM_SMI || HAVE_NVML && HAVE_ROCM_SMI
-  m_frame_gpu.set_child(m_box_gpu);
-  m_frame_gpu.add_css_class("gpu-frame");
+  frame_gpu_.set_child(box_gpu_);
+  frame_gpu_.add_css_class("gpu-frame");
 
   gpu_data_ = gpu_.get_gpu_data();
   size_t gpu_count = gpu_data_.size();
 
   for (const auto &g : gpu_data_)
   {
-    m_frame_gpu.set_label(g.name);
+    frame_gpu_.set_label(g.name);
     auto gpu_util = Gtk::make_managed<Gtk::ProgressBar>();
     auto mem_util = Gtk::make_managed<Gtk::ProgressBar>();
     auto tot_vram = Gtk::make_managed<Gtk::ProgressBar>();
@@ -232,17 +232,17 @@ SystemMonitorWindow::SystemMonitorWindow()
     free_vram->set_hexpand(true);
     free_vram->add_css_class("free-vram");
 
-    m_box_gpu.append(*gpu_util);
-    m_box_gpu.append(*mem_util);
-    m_box_gpu.append(*tot_vram);
-    m_box_gpu.append(*used_vram);
-    m_box_gpu.append(*free_vram);
+    box_gpu_.append(*gpu_util);
+    box_gpu_.append(*mem_util);
+    box_gpu_.append(*tot_vram);
+    box_gpu_.append(*used_vram);
+    box_gpu_.append(*free_vram);
 
-    m_progressbar_gpu_util.push_back(gpu_util);
-    m_progressbar_gpu_mem_util.push_back(mem_util);
-    m_progressbar_gpu_tot_vram.push_back(tot_vram);
-    m_progressbar_gpu_used_vram.push_back(used_vram);
-    m_progressbar_gpu_free_vram.push_back(free_vram);
+    progressbar_gpu_util_.push_back(gpu_util);
+    progressbar_gpu_mem_util_.push_back(mem_util);
+    progressbar_gpu_tot_vram_.push_back(tot_vram);
+    progressbar_gpu_used_vram_.push_back(used_vram);
+    progressbar_gpu_free_vram_.push_back(free_vram);
   }
 
   Glib::signal_timeout().connect([this]()
@@ -251,33 +251,33 @@ SystemMonitorWindow::SystemMonitorWindow()
   update_gpu();
 #endif
 
-  m_frame_net.set_child(m_box_net);
-  m_frame_net.set_label(ip_data_.name + " " + ip_data_.addr);
-  m_box_net.append(m_progressbar_net_rx);
-  m_progressbar_net_rx.set_margin(5);
-  m_progressbar_net_rx.set_halign(Gtk::Align::CENTER);
-  m_progressbar_net_rx.set_valign(Gtk::Align::CENTER);
-  m_progressbar_net_rx.set_size_request(300, -1);
-  m_progressbar_net_rx.set_show_text(true);
-  m_progressbar_net_rx.set_vexpand(true);
-  m_progressbar_net_rx.set_hexpand(true);
-  m_progressbar_net_rx.add_css_class("net-progressbar-rx");
+  frame_net_.set_child(box_net_);
+  frame_net_.set_label(ip_data_.name + " " + ip_data_.addr);
+  box_net_.append(progressbar_net_rx_);
+  progressbar_net_rx_.set_margin(5);
+  progressbar_net_rx_.set_halign(Gtk::Align::CENTER);
+  progressbar_net_rx_.set_valign(Gtk::Align::CENTER);
+  progressbar_net_rx_.set_size_request(300, -1);
+  progressbar_net_rx_.set_show_text(true);
+  progressbar_net_rx_.set_vexpand(true);
+  progressbar_net_rx_.set_hexpand(true);
+  progressbar_net_rx_.add_css_class("net-progressbar-rx");
 
-  m_box_net.append(m_progressbar_net_tx);
-  m_progressbar_net_tx.set_margin(5);
-  m_progressbar_net_tx.set_halign(Gtk::Align::CENTER);
-  m_progressbar_net_tx.set_valign(Gtk::Align::CENTER);
-  m_progressbar_net_tx.set_size_request(300, -1);
-  m_progressbar_net_tx.set_show_text(true);
-  m_progressbar_net_tx.set_vexpand(true);
-  m_progressbar_net_tx.set_hexpand(true);
-  m_progressbar_net_tx.add_css_class("net-progressbar-tx");
+  box_net_.append(progressbar_net_tx_);
+  progressbar_net_tx_.set_margin(5);
+  progressbar_net_tx_.set_halign(Gtk::Align::CENTER);
+  progressbar_net_tx_.set_valign(Gtk::Align::CENTER);
+  progressbar_net_tx_.set_size_request(300, -1);
+  progressbar_net_tx_.set_show_text(true);
+  progressbar_net_tx_.set_vexpand(true);
+  progressbar_net_tx_.set_hexpand(true);
+  progressbar_net_tx_.add_css_class("net-progressbar-tx");
 
   Glib::signal_timeout().connect([this]()
                                  { return update_net_usage(); },
                                  1000);
 
-  m_frame_fs.set_child(m_box_fs);
+  frame_fs_.set_child(box_fs_);
 
   auto mnts = files_system_.get_mounted_file_system();
   for (const auto &mnt : mnts)
@@ -293,71 +293,71 @@ SystemMonitorWindow::SystemMonitorWindow()
       bar->set_show_text(true);
       bar->set_vexpand(true);
       bar->set_hexpand(true);
-      m_box_fs.append(*bar);
-      m_progressbar_fs.push_back({mnt.mount_point, bar});
+      box_fs_.append(*bar);
+      progressbar_fs_.push_back({mnt.mount_point, bar});
     }
   }
 
   Glib::signal_timeout().connect([this]()
                                  {
-    for (const auto& disk : m_progressbar_fs)
+    for (const auto& disk : progressbar_fs_)
     {
       update_disk_usage(disk.mntPoint);
     }
     return true; },
                                  1000);
 
-  m_VBox.append(m_frame_cpu);
-  m_gpu_net_box.set_spacing(5);
-  m_gpu_net_box.append(m_frame_gpu);
-  m_gpu_net_box.append(m_frame_net);
-  m_VBox.append(m_gpu_net_box);
-  m_ram_fs_box.set_spacing(5);
-  m_ram_fs_box.append(m_frame_ram);
-  m_ram_fs_box.append(m_frame_fs);
-  m_VBox.append(m_ram_fs_box);
+  VBox_.append(frame_cpu_);
+  gpu_net_box_.set_spacing(5);
+  gpu_net_box_.append(frame_gpu_);
+  gpu_net_box_.append(frame_net_);
+  VBox_.append(gpu_net_box_);
+  ram_fs_box_.set_spacing(5);
+  ram_fs_box_.append(frame_ram_);
+  ram_fs_box_.append(frame_fs_);
+  VBox_.append(ram_fs_box_);
 
   // key event / change boxes you see
-  key_controller = Gtk::EventControllerKey::create();
+  key_controller_ = Gtk::EventControllerKey::create();
 
-  key_controller->signal_key_pressed().connect(
+  key_controller_->signal_key_pressed().connect(
     [this](guint keyval, guint keycode, Gdk::ModifierType state) -> bool
     {
       switch (keyval)
       {
         case GDK_KEY_1:
-          m_frame_cpu.set_visible(!m_frame_cpu.get_visible());
+          frame_cpu_.set_visible(!frame_cpu_.get_visible());
           break;
         case GDK_KEY_2:
-          m_frame_ram.set_visible(!m_frame_ram.get_visible());
+          frame_ram_.set_visible(!frame_ram_.get_visible());
           break;
         case GDK_KEY_3:
-          m_frame_gpu.set_visible(!m_frame_gpu.get_visible());
+          frame_gpu_.set_visible(!frame_gpu_.get_visible());
           break;
         case GDK_KEY_4:
-          m_frame_fs.set_visible(!m_frame_fs.get_visible());
+          frame_fs_.set_visible(!frame_fs_.get_visible());
         case GDK_KEY_5:
-          m_frame_net.set_visible(!m_frame_net.get_visible());
+          frame_net_.set_visible(!frame_net_.get_visible());
           break;
       }
       return true;
     },
     false);
 
-  add_controller(key_controller);
+  add_controller(key_controller_);
 
   // css
-  m_ref_css_provider = Gtk::CssProvider::create();
+  ref_css_provider_ = Gtk::CssProvider::create();
 #if HAS_STYLE_PROVIDER_ADD_PROVIDER_FOR_DISPLAY
   Gtk::StyleProvider::add_provider_for_display(get_display(), m_ref_css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 #else
-  Gtk::StyleContext::add_provider_for_display(get_display(), m_ref_css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  Gtk::StyleContext::add_provider_for_display(get_display(), ref_css_provider_, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 #endif
 
-  m_ref_css_provider->signal_parsing_error().connect(
+  ref_css_provider_->signal_parsing_error().connect(
     [](const auto &section, const auto &err)
     { on_parsing_error(section, err); });
-  m_ref_css_provider->load_from_path("../css/style.css");
+  ref_css_provider_->load_from_path("../css/style.css");
 }
 
 SystemMonitorWindow::~SystemMonitorWindow()
@@ -422,15 +422,15 @@ bool SystemMonitorWindow::update_mem_usage()
   double percentageAvailable = availableGIB / totGIB;
   double percentageFree = freeGIB / totGIB;
 
-  m_progressbar_mem_tot.set_text("Total memory: " + two_decimals_format(totGIB) + " GIB");
-  m_progressbar_mem_used.set_text("Memory used: " + two_decimals_format(usedGIB) + " GIB");
-  m_progressbar_mem_available.set_text("Available memory: " + two_decimals_format(availableGIB) + " GIB");
-  m_progressbar_mem_free.set_text("Free memory: " + two_decimals_format(freeGIB) + " GIB");
+  progressbar_mem_tot_.set_text("Total memory: " + two_decimals_format(totGIB) + " GIB");
+  progressbar_mem_used_.set_text("Memory used: " + two_decimals_format(usedGIB) + " GIB");
+  progressbar_mem_available_.set_text("Available memory: " + two_decimals_format(availableGIB) + " GIB");
+  progressbar_mem_free_.set_text("Free memory: " + two_decimals_format(freeGIB) + " GIB");
 
-  m_progressbar_mem_tot.set_fraction(1.0);
-  m_progressbar_mem_used.set_fraction(percentageUsed);
-  m_progressbar_mem_available.set_fraction(percentageAvailable);
-  m_progressbar_mem_free.set_fraction(percentageFree);
+  progressbar_mem_tot_.set_fraction(1.0);
+  progressbar_mem_used_.set_fraction(percentageUsed);
+  progressbar_mem_available_.set_fraction(percentageAvailable);
+  progressbar_mem_free_.set_fraction(percentageFree);
 
   return true;
 }
@@ -440,32 +440,32 @@ bool SystemMonitorWindow::update_gpu()
 {
   auto data = gpu_.get_gpu_data();
 
-  for (size_t i = 0; i < data.size() && i < m_progressbar_gpu_util.size(); i++)
+  for (size_t i = 0; i < data.size() && i < progressbar_gpu_util_.size(); i++)
   {
     const auto &g = data[i];
 
-    m_progressbar_gpu_util[i]->set_fraction(g.gpu_util / 100.0);
-    m_progressbar_gpu_util[i]->set_text("GPU Util: " + two_decimals_format(g.gpu_util) + "%");
+    progressbar_gpu_util_[i]->set_fraction(g.gpu_util / 100.0);
+    progressbar_gpu_util_[i]->set_text("GPU Util: " + two_decimals_format(g.gpu_util) + "%");
 
-    m_progressbar_gpu_mem_util[i]->set_fraction(g.mem_util / 100.0);
-    m_progressbar_gpu_mem_util[i]->set_text("MEM util: " + two_decimals_format(g.mem_util) + "%");
+    progressbar_gpu_mem_util_[i]->set_fraction(g.mem_util / 100.0);
+    progressbar_gpu_mem_util_[i]->set_text("MEM util: " + two_decimals_format(g.mem_util) + "%");
 
     if (g.tot_vram > 0)
     {
-      m_progressbar_gpu_tot_vram[i]->set_fraction(g.tot_vram / 100.0);
-      m_progressbar_gpu_tot_vram[i]->set_text("Tot Vram: " + two_decimals_format(g.tot_vram) + " GIB");
+      progressbar_gpu_tot_vram_[i]->set_fraction(g.tot_vram / 100.0);
+      progressbar_gpu_tot_vram_[i]->set_text("Tot Vram: " + two_decimals_format(g.tot_vram) + " GIB");
 
-      m_progressbar_gpu_used_vram[i]->set_fraction(g.used_vram / 100.0);
-      m_progressbar_gpu_used_vram[i]->set_text("Used Vram: " + two_decimals_format(g.used_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
+      progressbar_gpu_used_vram_[i]->set_fraction(g.used_vram / 100.0);
+      progressbar_gpu_used_vram_[i]->set_text("Used Vram: " + two_decimals_format(g.used_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
 
-      m_progressbar_gpu_free_vram[i]->set_text("Free Vram: " + two_decimals_format(g.free_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
-      m_progressbar_gpu_free_vram[i]->set_fraction(g.free_vram / 100.0);
+      progressbar_gpu_free_vram_[i]->set_text("Free Vram: " + two_decimals_format(g.free_vram) + " GIB " + "/ " + two_decimals_format(g.tot_vram) + " GIB");
+      progressbar_gpu_free_vram_[i]->set_fraction(g.free_vram / 100.0);
     }
     else
     {
-      m_progressbar_gpu_tot_vram[i]->set_fraction(0.0);
-      m_progressbar_gpu_used_vram[i]->set_fraction(0.0);
-      m_progressbar_gpu_free_vram[i]->set_fraction(0.0);
+      progressbar_gpu_tot_vram_[i]->set_fraction(0.0);
+      progressbar_gpu_used_vram_[i]->set_fraction(0.0);
+      progressbar_gpu_free_vram_[i]->set_fraction(0.0);
     }
   }
   return true;
@@ -502,10 +502,10 @@ bool SystemMonitorWindow::update_net_usage()
 
       constexpr double maxKbPerSec = 125.0 * 1024.0;
 
-      m_progressbar_net_rx.set_text("↓ " + two_decimals_format(rx_kb) + " KB/s");
-      m_progressbar_net_rx.set_fraction(std::min(rx_kb / maxKbPerSec, 1.0));
-      m_progressbar_net_tx.set_text("↑ " + two_decimals_format(tx_kb) + " KB/s");
-      m_progressbar_net_tx.set_fraction(std::min(tx_kb / maxKbPerSec, 1.0));
+      progressbar_net_rx_.set_text("↓ " + two_decimals_format(rx_kb) + " KB/s");
+      progressbar_net_rx_.set_fraction(std::min(rx_kb / maxKbPerSec, 1.0));
+      progressbar_net_tx_.set_text("↑ " + two_decimals_format(tx_kb) + " KB/s");
+      progressbar_net_tx_.set_fraction(std::min(tx_kb / maxKbPerSec, 1.0));
     }
   }
   prev = std::move(curr);
@@ -528,7 +528,7 @@ bool SystemMonitorWindow::update_disk_usage(const std::string &path)
 
   double usage = (double)used / (double)tot;
 
-  for (auto &disk : m_progressbar_fs)
+  for (auto &disk : progressbar_fs_)
   {
     if (disk.mntPoint == path)
     {
