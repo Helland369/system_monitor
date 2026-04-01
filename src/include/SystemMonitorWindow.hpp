@@ -85,7 +85,7 @@ private:
   bool    update_net_usage();
 
   // disks / file-system
-  FileSystem filesSystem;
+  FileSystem files_system_;
   bool       update_disk_usage(const std::string &path);
 
   // formatting

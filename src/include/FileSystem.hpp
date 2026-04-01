@@ -3,10 +3,9 @@
 #include <string>
 #include <vector>
 
-class MountInfo
+struct MountInfo
 {
-public:
-  std::string device, mountPoint, fsType;
+  std::string device, mount_point, fs_type;
 };
 
 class FileSystem

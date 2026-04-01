@@ -279,10 +279,10 @@ SystemMonitorWindow::SystemMonitorWindow()
 
   m_frame_fs.set_child(m_box_fs);
 
-  auto mnts = filesSystem.get_mounted_file_system();
+  auto mnts = files_system_.get_mounted_file_system();
   for (const auto &mnt : mnts)
   {
-    if (mnt.device.find("/dev") == 0 && mnt.fsType != "tmpfs" && mnt.fsType != "proc" && mnt.fsType != "sysfs")
+    if (mnt.device.find("/dev") == 0 && mnt.fs_type != "tmpfs" && mnt.fs_type != "proc" && mnt.fs_type != "sysfs")
     {
       auto *bar = Gtk::make_managed<Gtk::ProgressBar>();
       bar->set_margin(5);
@@ -294,7 +294,7 @@ SystemMonitorWindow::SystemMonitorWindow()
       bar->set_vexpand(true);
       bar->set_hexpand(true);
       m_box_fs.append(*bar);
-      m_progressbar_fs.push_back({mnt.mountPoint, bar});
+      m_progressbar_fs.push_back({mnt.mount_point, bar});
     }
   }
 

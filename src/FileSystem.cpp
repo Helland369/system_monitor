@@ -22,7 +22,7 @@ std::vector<MountInfo> FileSystem::get_mounted_file_system()
     std::istringstream ss(line);
     MountInfo          mi;
 
-    if (ss >> mi.device >> mi.mountPoint >> mi.fsType)
+    if (ss >> mi.device >> mi.mount_point >> mi.fs_type)
     {
       mount.push_back(mi);
     }
