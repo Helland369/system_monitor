@@ -61,35 +61,43 @@
     background-color: #3333;
 }
 
-.gpu-progressbar-nvidia-gpuUtil {
+.gpu-util {
     color: whitesmoke;
 }
 
-.gpu-progressbar-nvidia-gpuUtil progress {
+.gpu-util progress {
     background-color: black;
 }
 
-.gpu-progressbar-nvidia-memUtil {
+.mem-util {
     color: whitesmoke;
 }
 
-gpu-progressbar-nvidia-memUtil progress {
+.mem-util progress {
     background-color: black;
 }
 
-.gpu-progressbar-nvidia-usedVram {
+.tot-vram {
     color: whitesmoke;
 }
 
-.gpu-progressbar-nvidia-usedVram progress {
+.tot-vram progress {
     background-color: black;
 }
 
-.gpu-progressbar-nvidia-freeVram {
+.used-vram {
     color: whitesmoke;
 }
 
-.gpu-progressbar-nvidia-freeVram progress {
+.used-vram progress {
+    background-color: black;
+}
+
+.free-vram {
+    color: whitesmoke;
+}
+
+.free-vram progress {
     background-color: black;
 }
 
